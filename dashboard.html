@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Karang Taruna Cirebon</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>KARANG TARUNA <span>CIREBON</span></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="data.html">Data</a></li>
+                <li><a href="sekretariat.html">Sekretariat</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="dashboard-header">
+            <div class="container">
+                <h1>Dashboard Admin</h1>
+                <p>Kelola data Karang Taruna Kabupaten Cirebon</p>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <div class="container">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" data-tab="kecamatan">Data Kecamatan</button>
+                    <button class="tab-btn" data-tab="desa">Data Desa</button>
+                    <button class="tab-btn" data-tab="struktur">Struktur Organisasi</button>
+                    <button class="tab-btn" data-tab="sekretariat">Sekretariat</button>
+                </div>
+
+                <div id="kecamatanTab" class="tab-content active">
+                    <div class="admin-actions">
+                        <button class="btn-add" onclick="showAddForm('kecamatan')">
+                            <i class="fas fa-plus"></i> Tambah Kecamatan
+                        </button>
+                    </div>
+                    <div id="kecamatanList" class="admin-list"></div>
+                </div>
+
+                <div id="desaTab" class="tab-content">
+                    <div class="admin-actions">
+                        <button class="btn-add" onclick="showAddForm('desa')">
+                            <i class="fas fa-plus"></i> Tambah Desa
+                        </button>
+                    </div>
+                    <div id="desaList" class="admin-list"></div>
+                </div>
+
+                <div id="strukturTab" class="tab-content">
+                    <div class="admin-actions">
+                        <button class="btn-add" onclick="showAddForm('struktur')">
+                            <i class="fas fa-plus"></i> Tambah Pengurus
+                        </button>
+                    </div>
+                    <div id="strukturList" class="admin-list"></div>
+                </div>
+
+                <div id="sekretariatTab" class="tab-content">
+                    <div class="admin-actions">
+                        <button class="btn-edit" onclick="editSekretariat()">
+                            <i class="fas fa-edit"></i> Edit Informasi Sekretariat
+                        </button>
+                    </div>
+                    <div id="sekretariatInfo" class="sekretariat-admin"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Tambah Data</h2>
+            <form id="dataForm">
+                <div id="formFields"></div>
+                <button type="submit" class="submit-btn">Simpan</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Karang Taruna Kabupaten Cirebon. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
