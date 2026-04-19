@@ -4,15 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karang Taruna Kabupaten Cirebon - Data</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Additional styles for data page */
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+        .logo h2 {
+            color: white;
+            font-size: 1.3rem;
+        }
+        .logo span {
+            color: #ffd700;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+            color: #ffd700;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        
+        /* Page Header */
         .page-header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
-            padding: 3rem 2rem;
+            padding: 6rem 2rem 3rem;
             text-align: center;
             margin-top: 0;
         }
@@ -20,6 +101,12 @@
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        /* Data Controls */
         .data-controls {
             margin: 2rem 0;
             display: flex;
@@ -72,6 +159,8 @@
             color: white;
             border-color: #2a5298;
         }
+        
+        /* Data Summary */
         .data-summary {
             display: flex;
             gap: 2rem;
@@ -101,11 +190,14 @@
             color: #666;
             font-size: 0.9rem;
         }
+        
+        /* Data Grid */
         .data-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-top: 2rem;
+            margin-bottom: 3rem;
         }
         .data-item {
             background: white;
@@ -124,9 +216,12 @@
             margin-bottom: 0.8rem;
             font-size: 1.2rem;
         }
+        .data-item h3 i {
+            margin-right: 8px;
+        }
         .data-item p {
             color: #666;
-            margin: 0.3rem 0;
+            margin: 0.5rem 0;
         }
         .status-active {
             color: #27ae60;
@@ -144,12 +239,46 @@
             border-radius: 20px;
             display: inline-block;
         }
+        
+        /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
             color: #666;
         }
+        
+        /* Footer */
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 0;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+                gap: 1rem;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
             .data-controls {
                 flex-direction: column;
             }
@@ -159,6 +288,17 @@
             .page-header h1 {
                 font-size: 1.8rem;
             }
+            .page-header {
+                padding: 5rem 2rem 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+            .summary-card span {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -166,7 +306,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna" class="logo-img">
+                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna">
                 <h2>KARANG TARUNA <span>CIREBON</span></h2>
             </div>
             <ul class="nav-menu">
@@ -237,39 +377,184 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
-    <!-- Firebase Configuration - HANYA SEKALI INITIALISASI -->
+    <!-- All JavaScript for data.html - INDEPENDENT, tidak tergantung script.js -->
     <script>
-        // Cek apakah Firebase sudah diinisialisasi
+        // ==================== FIREBASE CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
+            authDomain: "karang-taruna-dalam-data.firebaseapp.com",
+            databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "karang-taruna-dalam-data",
+            storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
+            messagingSenderId: "922028160917",
+            appId: "1:922028160917:web:8397305a92af28c0ca689c",
+            measurementId: "G-8JNPDJPRM1"
+        };
+        
+        // Initialize Firebase (hanya sekali)
         if (!firebase.apps.length) {
-            const firebaseConfig = {
-                apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
-                authDomain: "karang-taruna-dalam-data.firebaseapp.com",
-                databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
-                projectId: "karang-taruna-dalam-data",
-                storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
-                messagingSenderId: "922028160917",
-                appId: "1:922028160917:web:8397305a92af28c0ca689c",
-                measurementId: "G-8JNPDJPRM1"
-            };
-            
-            // Initialize Firebase
             firebase.initializeApp(firebaseConfig);
             console.log('✅ Firebase initialized on data.html');
-        } else {
-            console.log('✅ Firebase already initialized, using existing instance');
         }
         
-        // Test database connection (gunakan variabel lokal, bukan global)
-        const db = firebase.database();
-        db.ref('.info/connected').on('value', (snap) => {
-            if (snap.val() === true) {
-                console.log('✅ Terhubung ke Firebase Realtime Database');
-            } else {
-                console.log('❌ Gagal terhubung ke Firebase Realtime Database');
+        const database = firebase.database();
+        
+        // ==================== HELPER FUNCTIONS ====================
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        
+        // ==================== DATA FUNCTIONS ====================
+        let currentFilter = 'all';
+        let currentSearch = '';
+        
+        function loadAllData() {
+            Promise.all([
+                database.ref('kecamatan').once('value'),
+                database.ref('desa').once('value')
+            ]).then(([kecamatanSnapshot, desaSnapshot]) => {
+                const totalKecamatan = kecamatanSnapshot.numChildren();
+                const totalDesa = desaSnapshot.numChildren();
+                
+                const totalKecamatanElem = document.getElementById('totalKecamatan');
+                const totalDesaElem = document.getElementById('totalDesa');
+                if (totalKecamatanElem) totalKecamatanElem.textContent = totalKecamatan;
+                if (totalDesaElem) totalDesaElem.textContent = totalDesa;
+                
+                displayData(kecamatanSnapshot, desaSnapshot);
+            }).catch(error => {
+                console.error('Error loading data:', error);
+                const container = document.getElementById('dataContainer');
+                if (container) {
+                    container.innerHTML = '<div class="loading">❌ Gagal memuat data. Periksa koneksi database.</div>';
+                }
+            });
+        }
+        
+        function displayData(kecamatanSnapshot, desaSnapshot, filter = currentFilter, search = currentSearch) {
+            const container = document.getElementById('dataContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            let hasData = false;
+            
+            // Tampilkan data kecamatan
+            if (filter === 'all' || filter === 'kecamatan') {
+                kecamatanSnapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    if (search && !data.nama.toLowerCase().includes(search.toLowerCase())) return;
+                    hasData = true;
+                    
+                    const card = `
+                        <div class="data-item">
+                            <h3><i class="fas fa-building"></i> ${escapeHtml(data.nama)}</h3>
+                            <p><strong>Ketua:</strong> ${escapeHtml(data.ketua || '-')}</p>
+                            <p><strong>Status:</strong> <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
             }
+            
+            // Tampilkan data desa
+            if (filter === 'all' || filter === 'desa') {
+                desaSnapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    if (search && !data.nama.toLowerCase().includes(search.toLowerCase())) return;
+                    hasData = true;
+                    
+                    const card = `
+                        <div class="data-item">
+                            <h3><i class="fas fa-home"></i> ${escapeHtml(data.nama)}</h3>
+                            <p><strong>Kecamatan:</strong> ${escapeHtml(data.kecamatan)}</p>
+                            <p><strong>Ketua:</strong> ${escapeHtml(data.ketua || '-')}</p>
+                            <p><strong>Status:</strong> <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            }
+            
+            if (!hasData) {
+                container.innerHTML = '<div class="loading">📭 Tidak ada data ditemukan</div>';
+            }
+        }
+        
+        function refreshData() {
+            Promise.all([
+                database.ref('kecamatan').once('value'),
+                database.ref('desa').once('value')
+            ]).then(([kecamatanSnapshot, desaSnapshot]) => {
+                displayData(kecamatanSnapshot, desaSnapshot);
+            }).catch(error => {
+                console.error('Error refreshing data:', error);
+            });
+        }
+        
+        // ==================== SETUP FILTERS & SEARCH ====================
+        function setupFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    currentSearch = e.target.value;
+                    refreshData();
+                });
+            }
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    refreshData();
+                });
+            });
+        }
+        
+        // ==================== INIT DEFAULT DATA (HANYA JIKA KOSONG) ====================
+        function initDefaultDataIfEmpty() {
+            // Cek data kecamatan
+            database.ref('kecamatan').once('value', (snapshot) => {
+                if (!snapshot.exists()) {
+                    const sampleKecamatan = {
+                        nama: "Kecamatan Sumber",
+                        ketua: "Contoh Nama Ketua",
+                        status: "Aktif",
+                        updatedAt: new Date().toISOString()
+                    };
+                    database.ref('kecamatan').push(sampleKecamatan);
+                    console.log('✅ Data contoh kecamatan ditambahkan (karena database kosong)');
+                    refreshData();
+                }
+            }).catch(err => console.error('Error cek kecamatan:', err));
+        }
+        
+        // ==================== NAVIGATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hamburger menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Load data
+            loadAllData();
+            setupFilters();
+            
+            // Inisialisasi data default jika kosong
+            setTimeout(initDefaultDataIfEmpty, 1500);
         });
     </script>
-    
-    <script src="script.js"></script>
 </body>
 </html>
