@@ -23,19 +23,63 @@
             gap: 2rem;
             margin-bottom: 2rem;
         }
+        .photo-gallery {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
         .photo-gallery img {
             width: 100%;
             height: 300px;
             object-fit: cover;
             border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        .photo-gallery img:hover {
+            transform: scale(1.05);
+        }
+        .secretariat-info h3, 
+        .map-section h3, 
+        .additional-photos h3 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .secretariat-info h3:after, 
+        .map-section h3:after, 
+        .additional-photos h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 3px;
+        }
+        .info-details {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
         }
         .info-details p {
             margin: 15px 0;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .info-details p:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .info-details i {
             width: 30px;
             color: #2a5298;
+            font-size: 1.2rem;
         }
         .photo-grid {
             display: grid;
@@ -48,10 +92,20 @@
             height: 150px;
             object-fit: cover;
             border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .photo-grid img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         @media (max-width: 768px) {
             .secretariat-grid {
                 grid-template-columns: 1fr;
+            }
+            .photo-gallery img {
+                height: 250px;
             }
         }
     </style>
@@ -60,6 +114,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
+                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna" class="logo-img">
                 <h2>KARANG TARUNA <span>CIREBON</span></h2>
             </div>
             <ul class="nav-menu">
@@ -90,14 +145,14 @@
                     <div class="secretariat-photo">
                         <h3>Foto Sekretariat</h3>
                         <div class="photo-gallery">
-                            <img id="mainPhoto" src="https://via.placeholder.com/800x400?text=Foto+Sekretariat" alt="Foto Utama Sekretariat">
+                            <img id="mainPhoto" src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png" alt="Foto Utama Sekretariat Karang Taruna Kabupaten Cirebon">
                         </div>
                     </div>
                     <div class="secretariat-info">
                         <h3>Informasi Sekretariat</h3>
                         <div class="info-details">
-                            <p><i class="fas fa-map-marker-alt"></i> <span id="address">Jl. Contoh Alamat No. 123, Kabupaten Cirebon</span></p>
-                            <p><i class="fas fa-phone"></i> <span id="phone">(0231) 123456</span></p>
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="address">Jl. Sunan Drajat No. 1, Sumber, Kabupaten Cirebon</span></p>
+                            <p><i class="fas fa-phone"></i> <span id="phone">(0231) 321456</span></p>
                             <p><i class="fas fa-envelope"></i> <span id="email">karangtaruna@cirebonkab.go.id</span></p>
                         </div>
                     </div>
@@ -105,13 +160,14 @@
 
                 <div class="map-section">
                     <h3>Lokasi Sekretariat</h3>
-                    <div id="fullMap"></div>
+                    <div id="fullMap">Memuat peta...</div>
                 </div>
 
                 <div class="additional-photos">
                     <h3>Dokumentasi Kegiatan</h3>
                     <div class="photo-grid" id="activityPhotos">
                         <!-- Activity photos will be loaded here -->
+                        <div class="loading">Memuat foto kegiatan...</div>
                     </div>
                 </div>
             </div>
@@ -121,6 +177,7 @@
     <footer>
         <div class="container">
             <p>&copy; 2024 Karang Taruna Kabupaten Cirebon. All Rights Reserved.</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Berlandaskan Pancasila dan Undang-Undang Dasar 1945</p>
         </div>
     </footer>
 
@@ -129,6 +186,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
+    <!-- Firebase Configuration -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
@@ -140,7 +198,19 @@
             appId: "1:922028160917:web:8397305a92af28c0ca689c",
             measurementId: "G-8JNPDJPRM1"
         };
+        
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        
+        // Test database connection
+        const database = firebase.database();
+        database.ref('.info/connected').on('value', (snap) => {
+            if (snap.val() === true) {
+                console.log('✅ Terhubung ke Firebase Realtime Database');
+            } else {
+                console.log('❌ Gagal terhubung ke Firebase Realtime Database');
+            }
+        });
     </script>
     
     <!-- Leaflet JS -->
