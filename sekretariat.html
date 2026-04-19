@@ -100,12 +100,36 @@
             transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+        .page-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 0;
+        }
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
         @media (max-width: 768px) {
             .secretariat-grid {
                 grid-template-columns: 1fr;
             }
             .photo-gallery img {
                 height: 250px;
+            }
+            .page-header h1 {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -186,29 +210,40 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
-    <!-- Firebase Configuration -->
+    <!-- Firebase Configuration - HANYA SEKALI INITIALISASI -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
-            authDomain: "karang-taruna-dalam-data.firebaseapp.com",
-            databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "karang-taruna-dalam-data",
-            storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
-            messagingSenderId: "922028160917",
-            appId: "1:922028160917:web:8397305a92af28c0ca689c",
-            measurementId: "G-8JNPDJPRM1"
-        };
+        // Cek apakah Firebase sudah diinisialisasi
+        if (!firebase.apps.length) {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
+                authDomain: "karang-taruna-dalam-data.firebaseapp.com",
+                databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "karang-taruna-dalam-data",
+                storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
+                messagingSenderId: "922028160917",
+                appId: "1:922028160917:web:8397305a92af28c0ca689c",
+                measurementId: "G-8JNPDJPRM1"
+            };
+            
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase initialized on sekretariat.html');
+        } else {
+            console.log('✅ Firebase already initialized, using existing instance');
+        }
         
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        
-        // Test database connection
-        const database = firebase.database();
-        database.ref('.info/connected').on('value', (snap) => {
+        // Test database connection (gunakan variabel lokal, bukan global)
+        const db = firebase.database();
+        db.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
                 console.log('✅ Terhubung ke Firebase Realtime Database');
+                // Tambahkan indikator visual
+                const footer = document.querySelector('footer');
+                if (footer) footer.style.borderTop = '3px solid green';
             } else {
                 console.log('❌ Gagal terhubung ke Firebase Realtime Database');
+                const footer = document.querySelector('footer');
+                if (footer) footer.style.borderTop = '3px solid red';
             }
         });
     </script>
