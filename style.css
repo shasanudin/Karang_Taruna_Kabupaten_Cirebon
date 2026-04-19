@@ -588,3 +588,41 @@ footer {
         justify-content: center;
     }
 }
+/* Status Styles */
+.status-active {
+    color: #27ae60;
+    font-weight: 500;
+}
+
+.status-inactive {
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+/* Map placeholder */
+#previewMap, #fullMap {
+    width: 100%;
+    height: 300px;
+    background: #e0e0e0;
+    border-radius: 10px;
+}
+
+#fullMap {
+    height: 400px;
+}
+
+/* Photo gallery */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Activity photos */
+#activityPhotos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
