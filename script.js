@@ -95,13 +95,12 @@ function initLeafletMap(elementId, latitude, longitude, zoom = 15) {
     // Bersihkan map jika sudah ada
     if (mapElement._leaflet_id) {
         try {
-            const existingMap = mapElement._leaflet_id;
-            if (existingMap) {
-                // Hapus map yang ada
-                const map = window[`map_${elementId}`];
-                if (map) map.remove();
+            if (window[`map_${elementId}`]) {
+                window[`map_${elementId}`].remove();
             }
-        } catch(e) {}
+        } catch(e) {
+            console.log('Error removing existing map:', e);
+        }
     }
     
     // Cek apakah Leaflet sudah loaded
@@ -112,22 +111,35 @@ function initLeafletMap(elementId, latitude, longitude, zoom = 15) {
     }
     
     try {
+        // Clear inner HTML
+        mapElement.innerHTML = '';
+        
         const map = L.map(elementId).setView([latitude, longitude], zoom);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(map);
         
-        L.marker([latitude, longitude]).addTo(map)
-            .bindPopup('<b>Sekretariat Karang Taruna</b><br>Kabupaten Cirebon')
-            .openPopup();
+        // Add custom marker with popup
+        const marker = L.marker([latitude, longitude]).addTo(map);
+        marker.bindPopup(`
+            <b>Sekretariat Karang Taruna</b><br>
+            Kabupaten Cirebon<br>
+            <small>Klik untuk petunjuk arah</small>
+        `).openPopup();
         
         // Simpan reference
         window[`map_${elementId}`] = map;
+        
+        // Resize map after a short delay to ensure proper rendering
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 200);
+        
         return map;
     } catch(e) {
         console.error('Error creating Leaflet map:', e);
-        mapElement.innerHTML = '<div style="padding:20px; text-align:center;">Peta tidak dapat dimuat</div>';
+        mapElement.innerHTML = '<div style="padding:20px; text-align:center; color:#666;">📍 Peta tidak dapat dimuat</div>';
         return null;
     }
 }
@@ -138,13 +150,13 @@ function loadSecretariatPreview() {
         if (data) {
             const secretariatPhoto = document.getElementById('secretariatPhoto');
             if (secretariatPhoto) {
-                secretariatPhoto.src = data.foto || 'https://via.placeholder.com/400x300?text=Foto+Sekretariat';
+                secretariatPhoto.src = data.foto || 'https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png';
+                secretariatPhoto.alt = 'Foto Sekretariat Karang Taruna Kabupaten Cirebon';
             }
             
             // Load map dengan Leaflet
             const previewMapDiv = document.getElementById('previewMap');
             if (previewMapDiv && data.latitude && data.longitude) {
-                // Tunggu sebentar untuk memastikan DOM siap
                 setTimeout(() => {
                     initLeafletMap('previewMap', data.latitude, data.longitude, 15);
                 }, 100);
@@ -158,6 +170,8 @@ function loadSecretariatPreview() {
                 }, 100);
             }
         }
+    }).catch(error => {
+        console.error('Error loading sekretariat preview:', error);
     });
 }
 
@@ -184,7 +198,7 @@ function loadAllData() {
     }).catch(error => {
         console.error('Error loading data:', error);
         const container = document.getElementById('dataContainer');
-        if (container) container.innerHTML = '<div class="loading">Gagal memuat data</div>';
+        if (container) container.innerHTML = '<div class="loading">❌ Gagal memuat data. Periksa koneksi database.</div>';
     });
 }
 
@@ -205,7 +219,7 @@ function displayData(kecamatanSnapshot, desaSnapshot, filter = 'all', search = '
                 <div class="data-item">
                     <h3><i class="fas fa-building"></i> ${escapeHtml(data.nama)}</h3>
                     <p><strong>Ketua:</strong> ${escapeHtml(data.ketua || '-')}</p>
-                    <p><strong>Status:</strong> <span class="status ${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
+                    <p><strong>Status:</strong> <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
                 </div>
             `;
             container.innerHTML += card;
@@ -223,7 +237,7 @@ function displayData(kecamatanSnapshot, desaSnapshot, filter = 'all', search = '
                     <h3><i class="fas fa-home"></i> ${escapeHtml(data.nama)}</h3>
                     <p><strong>Kecamatan:</strong> ${escapeHtml(data.kecamatan)}</p>
                     <p><strong>Ketua:</strong> ${escapeHtml(data.ketua || '-')}</p>
-                    <p><strong>Status:</strong> <span class="status ${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
+                    <p><strong>Status:</strong> <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
                 </div>
             `;
             container.innerHTML += card;
@@ -231,7 +245,7 @@ function displayData(kecamatanSnapshot, desaSnapshot, filter = 'all', search = '
     }
     
     if (!hasData) {
-        container.innerHTML = '<div class="loading">Tidak ada data ditemukan</div>';
+        container.innerHTML = '<div class="loading">📭 Tidak ada data ditemukan</div>';
     }
 }
 
@@ -248,6 +262,8 @@ function setupFilters() {
                 database.ref('desa').once('value')
             ]).then(([kecamatanSnapshot, desaSnapshot]) => {
                 displayData(kecamatanSnapshot, desaSnapshot, currentFilter, search);
+            }).catch(error => {
+                console.error('Error filtering data:', error);
             });
         });
     }
@@ -263,6 +279,8 @@ function setupFilters() {
                 database.ref('desa').once('value')
             ]).then(([kecamatanSnapshot, desaSnapshot]) => {
                 displayData(kecamatanSnapshot, desaSnapshot, currentFilter, search);
+            }).catch(error => {
+                console.error('Error filtering data:', error);
             });
         });
     });
@@ -274,13 +292,16 @@ function loadSecretariatPage() {
         const data = snapshot.val();
         if (data) {
             const mainPhoto = document.getElementById('mainPhoto');
-            if (mainPhoto) mainPhoto.src = data.foto || 'https://via.placeholder.com/800x400?text=Foto+Sekretariat';
+            if (mainPhoto) {
+                mainPhoto.src = data.foto || 'https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png';
+                mainPhoto.alt = 'Foto Sekretariat Karang Taruna Kabupaten Cirebon';
+            }
             
             const addressElem = document.getElementById('address');
-            if (addressElem) addressElem.textContent = data.alamat || 'Jl. Contoh Alamat No. 123, Kabupaten Cirebon';
+            if (addressElem) addressElem.textContent = data.alamat || 'Jl. Sunan Drajat No. 1, Sumber, Kabupaten Cirebon';
             
             const phoneElem = document.getElementById('phone');
-            if (phoneElem) phoneElem.textContent = data.telepon || '(0231) 123456';
+            if (phoneElem) phoneElem.textContent = data.telepon || '(0231) 321456';
             
             const emailElem = document.getElementById('email');
             if (emailElem) emailElem.textContent = data.email || 'karangtaruna@cirebonkab.go.id';
@@ -299,18 +320,23 @@ function loadSecretariatPage() {
             }
             
             // Load activity photos
-            if (data.foto_kegiatan && Array.isArray(data.foto_kegiatan)) {
+            if (data.foto_kegiatan && Array.isArray(data.foto_kegiatan) && data.foto_kegiatan.length > 0) {
                 const photoGrid = document.getElementById('activityPhotos');
                 if (photoGrid) {
                     photoGrid.innerHTML = '';
                     data.foto_kegiatan.forEach(photo => {
-                        const img = document.createElement('img');
-                        img.src = photo;
-                        img.style.width = '100%';
-                        img.style.height = '150px';
-                        img.style.objectFit = 'cover';
-                        img.style.borderRadius = '10px';
-                        photoGrid.appendChild(img);
+                        if (photo && photo.trim()) {
+                            const img = document.createElement('img');
+                            img.src = photo;
+                            img.alt = 'Foto Kegiatan Karang Taruna';
+                            img.style.width = '100%';
+                            img.style.height = '150px';
+                            img.style.objectFit = 'cover';
+                            img.style.borderRadius = '10px';
+                            img.style.cursor = 'pointer';
+                            img.onclick = () => window.open(photo, '_blank');
+                            photoGrid.appendChild(img);
+                        }
                     });
                 }
             }
@@ -323,6 +349,8 @@ function loadSecretariatPage() {
                 }, 100);
             }
         }
+    }).catch(error => {
+        console.error('Error loading sekretariat page:', error);
     });
 }
 
@@ -341,7 +369,23 @@ function setupLogin() {
                 })
                 .catch((error) => {
                     const messageElem = document.getElementById('loginMessage');
-                    if (messageElem) messageElem.textContent = 'Login gagal: ' + error.message;
+                    if (messageElem) {
+                        let errorMessage = 'Login gagal: ';
+                        switch(error.code) {
+                            case 'auth/user-not-found':
+                                errorMessage += 'Email tidak terdaftar';
+                                break;
+                            case 'auth/wrong-password':
+                                errorMessage += 'Password salah';
+                                break;
+                            case 'auth/invalid-email':
+                                errorMessage += 'Format email tidak valid';
+                                break;
+                            default:
+                                errorMessage += error.message;
+                        }
+                        messageElem.textContent = errorMessage;
+                    }
                 });
         });
     }
@@ -353,6 +397,7 @@ function checkAuth() {
             window.location.href = 'login.html';
         } else if (user) {
             currentUser = user;
+            console.log('User logged in:', user.email);
         }
     });
 }
@@ -374,7 +419,7 @@ function loadKecamatanData() {
     database.ref('kecamatan').once('value', (snapshot) => {
         container.innerHTML = '';
         if (snapshot.numChildren() === 0) {
-            container.innerHTML = '<div class="loading">Belum ada data kecamatan</div>';
+            container.innerHTML = '<div class="loading">📋 Belum ada data kecamatan. Klik "Tambah Kecamatan" untuk menambahkan.</div>';
             return;
         }
         
@@ -383,9 +428,9 @@ function loadKecamatanData() {
             const item = `
                 <div class="admin-item">
                     <div>
-                        <strong>${escapeHtml(data.nama)}</strong>
-                        <p>Ketua: ${escapeHtml(data.ketua || '-')}</p>
-                        <p>Status: ${escapeHtml(data.status || 'Aktif')}</p>
+                        <strong>🏢 ${escapeHtml(data.nama)}</strong>
+                        <p>👤 Ketua: ${escapeHtml(data.ketua || '-')}</p>
+                        <p>📊 Status: <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
                     </div>
                     <div class="admin-item-actions">
                         <button class="btn-edit-item" onclick="editItem('kecamatan', '${childSnapshot.key}')">
@@ -399,6 +444,9 @@ function loadKecamatanData() {
             `;
             container.innerHTML += item;
         });
+    }).catch(error => {
+        console.error('Error loading kecamatan:', error);
+        container.innerHTML = '<div class="loading">❌ Gagal memuat data kecamatan</div>';
     });
 }
 
@@ -409,7 +457,7 @@ function loadDesaData() {
     database.ref('desa').once('value', (snapshot) => {
         container.innerHTML = '';
         if (snapshot.numChildren() === 0) {
-            container.innerHTML = '<div class="loading">Belum ada data desa</div>';
+            container.innerHTML = '<div class="loading">📋 Belum ada data desa. Klik "Tambah Desa" untuk menambahkan.</div>';
             return;
         }
         
@@ -418,10 +466,10 @@ function loadDesaData() {
             const item = `
                 <div class="admin-item">
                     <div>
-                        <strong>${escapeHtml(data.nama)}</strong>
-                        <p>Kecamatan: ${escapeHtml(data.kecamatan)}</p>
-                        <p>Ketua: ${escapeHtml(data.ketua || '-')}</p>
-                        <p>Status: ${escapeHtml(data.status || 'Aktif')}</p>
+                        <strong>🏘️ ${escapeHtml(data.nama)}</strong>
+                        <p>📍 Kecamatan: ${escapeHtml(data.kecamatan)}</p>
+                        <p>👤 Ketua: ${escapeHtml(data.ketua || '-')}</p>
+                        <p>📊 Status: <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
                     </div>
                     <div class="admin-item-actions">
                         <button class="btn-edit-item" onclick="editItem('desa', '${childSnapshot.key}')">
@@ -435,6 +483,9 @@ function loadDesaData() {
             `;
             container.innerHTML += item;
         });
+    }).catch(error => {
+        console.error('Error loading desa:', error);
+        container.innerHTML = '<div class="loading">❌ Gagal memuat data desa</div>';
     });
 }
 
@@ -445,7 +496,7 @@ function loadStrukturData() {
     database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
         container.innerHTML = '';
         if (snapshot.numChildren() === 0) {
-            container.innerHTML = '<div class="loading">Belum ada data struktur</div>';
+            container.innerHTML = '<div class="loading">📋 Belum ada data struktur. Klik "Tambah Pengurus" untuk menambahkan.</div>';
             return;
         }
         
@@ -454,9 +505,9 @@ function loadStrukturData() {
             const item = `
                 <div class="admin-item">
                     <div>
-                        <strong>${escapeHtml(data.jabatan)}</strong>
-                        <p>Nama: ${escapeHtml(data.nama)}</p>
-                        <p>Alamat: ${escapeHtml(data.alamat || '-')}</p>
+                        <strong>📌 ${escapeHtml(data.jabatan)}</strong>
+                        <p>👤 Nama: ${escapeHtml(data.nama)}</p>
+                        <p>📍 Alamat: ${escapeHtml(data.alamat || '-')}</p>
                     </div>
                     <div class="admin-item-actions">
                         <button class="btn-edit-item" onclick="editItem('struktur', '${childSnapshot.key}')">
@@ -470,6 +521,9 @@ function loadStrukturData() {
             `;
             container.innerHTML += item;
         });
+    }).catch(error => {
+        console.error('Error loading struktur:', error);
+        container.innerHTML = '<div class="loading">❌ Gagal memuat data struktur</div>';
     });
 }
 
@@ -483,17 +537,20 @@ function loadSekretariatData() {
             container.innerHTML = `
                 <div class="admin-item">
                     <div>
-                        <p><strong>Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p>
-                        <p><strong>Telepon:</strong> ${escapeHtml(data.telepon || '-')}</p>
-                        <p><strong>Email:</strong> ${escapeHtml(data.email || '-')}</p>
-                        <p><strong>Latitude:</strong> ${data.latitude || '-'}</p>
-                        <p><strong>Longitude:</strong> ${data.longitude || '-'}</p>
+                        <p><strong>📍 Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p>
+                        <p><strong>📞 Telepon:</strong> ${escapeHtml(data.telepon || '-')}</p>
+                        <p><strong>📧 Email:</strong> ${escapeHtml(data.email || '-')}</p>
+                        <p><strong>🌐 Latitude:</strong> ${data.latitude || '-'}</p>
+                        <p><strong>🌐 Longitude:</strong> ${data.longitude || '-'}</p>
                     </div>
                 </div>
             `;
         } else {
-            container.innerHTML = '<div class="loading">Belum ada data sekretariat</div>';
+            container.innerHTML = '<div class="loading">📋 Belum ada data sekretariat. Klik "Edit Informasi Sekretariat" untuk menambahkan.</div>';
         }
+    }).catch(error => {
+        console.error('Error loading sekretariat:', error);
+        container.innerHTML = '<div class="loading">❌ Gagal memuat data sekretariat</div>';
     });
 }
 
@@ -521,6 +578,8 @@ function setupLogout() {
             e.preventDefault();
             auth.signOut().then(() => {
                 window.location.href = 'index.html';
+            }).catch(error => {
+                console.error('Error logging out:', error);
             });
         });
     }
@@ -542,12 +601,15 @@ function showAddForm(type) {
     if (type === 'kecamatan') {
         fields = `
             <div class="input-group">
+                <i class="fas fa-building"></i>
                 <input type="text" id="nama" placeholder="Nama Kecamatan" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-user"></i>
                 <input type="text" id="ketua" placeholder="Nama Ketua">
             </div>
             <div class="input-group">
+                <i class="fas fa-flag-checkered"></i>
                 <select id="status">
                     <option value="Aktif">Aktif</option>
                     <option value="Tidak Aktif">Tidak Aktif</option>
@@ -557,15 +619,19 @@ function showAddForm(type) {
     } else if (type === 'desa') {
         fields = `
             <div class="input-group">
+                <i class="fas fa-home"></i>
                 <input type="text" id="nama" placeholder="Nama Desa" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-building"></i>
                 <input type="text" id="kecamatan" placeholder="Nama Kecamatan" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-user"></i>
                 <input type="text" id="ketua" placeholder="Nama Ketua">
             </div>
             <div class="input-group">
+                <i class="fas fa-flag-checkered"></i>
                 <select id="status">
                     <option value="Aktif">Aktif</option>
                     <option value="Tidak Aktif">Tidak Aktif</option>
@@ -575,15 +641,19 @@ function showAddForm(type) {
     } else if (type === 'struktur') {
         fields = `
             <div class="input-group">
+                <i class="fas fa-tag"></i>
                 <input type="text" id="jabatan" placeholder="Jabatan" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-user"></i>
                 <input type="text" id="nama" placeholder="Nama Lengkap" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-map-marker-alt"></i>
                 <input type="text" id="alamat" placeholder="Alamat">
             </div>
             <div class="input-group">
+                <i class="fas fa-sort-numeric-down"></i>
                 <input type="number" id="urutan" placeholder="Urutan Tampil">
             </div>
         `;
@@ -620,12 +690,15 @@ function editItem(type, id) {
         if (type === 'kecamatan') {
             fields = `
                 <div class="input-group">
+                    <i class="fas fa-building"></i>
                     <input type="text" id="nama" placeholder="Nama Kecamatan" value="${escapeHtml(data.nama || '')}" required>
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-user"></i>
                     <input type="text" id="ketua" placeholder="Nama Ketua" value="${escapeHtml(data.ketua || '')}">
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-flag-checkered"></i>
                     <select id="status">
                         <option value="Aktif" ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option>
                         <option value="Tidak Aktif" ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option>
@@ -635,15 +708,19 @@ function editItem(type, id) {
         } else if (type === 'desa') {
             fields = `
                 <div class="input-group">
+                    <i class="fas fa-home"></i>
                     <input type="text" id="nama" placeholder="Nama Desa" value="${escapeHtml(data.nama || '')}" required>
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-building"></i>
                     <input type="text" id="kecamatan" placeholder="Nama Kecamatan" value="${escapeHtml(data.kecamatan || '')}" required>
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-user"></i>
                     <input type="text" id="ketua" placeholder="Nama Ketua" value="${escapeHtml(data.ketua || '')}">
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-flag-checkered"></i>
                     <select id="status">
                         <option value="Aktif" ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option>
                         <option value="Tidak Aktif" ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option>
@@ -653,15 +730,19 @@ function editItem(type, id) {
         } else if (type === 'struktur') {
             fields = `
                 <div class="input-group">
+                    <i class="fas fa-tag"></i>
                     <input type="text" id="jabatan" placeholder="Jabatan" value="${escapeHtml(data.jabatan || '')}" required>
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-user"></i>
                     <input type="text" id="nama" placeholder="Nama Lengkap" value="${escapeHtml(data.nama || '')}" required>
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-map-marker-alt"></i>
                     <input type="text" id="alamat" placeholder="Alamat" value="${escapeHtml(data.alamat || '')}">
                 </div>
                 <div class="input-group">
+                    <i class="fas fa-sort-numeric-down"></i>
                     <input type="number" id="urutan" placeholder="Urutan Tampil" value="${data.urutan || 0}">
                 </div>
             `;
@@ -723,14 +804,17 @@ function saveData(type) {
         if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
             loadStats();
         }
+        
+        // Show success message
+        alert('✅ Data berhasil disimpan!');
     }).catch(error => {
         console.error('Error saving data:', error);
-        alert('Gagal menyimpan data: ' + error.message);
+        alert('❌ Gagal menyimpan data: ' + error.message);
     });
 }
 
 function deleteItem(type, id) {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+    if (confirm('⚠️ Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.')) {
         database.ref(`${type}/${id}`).remove().then(() => {
             if (type === 'kecamatan') loadKecamatanData();
             else if (type === 'desa') loadDesaData();
@@ -740,9 +824,11 @@ function deleteItem(type, id) {
             if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
                 loadStats();
             }
+            
+            alert('✅ Data berhasil dihapus!');
         }).catch(error => {
             console.error('Error deleting data:', error);
-            alert('Gagal menghapus data: ' + error.message);
+            alert('❌ Gagal menghapus data: ' + error.message);
         });
     }
 }
@@ -762,25 +848,33 @@ function editSekretariat() {
         
         formFields.innerHTML = `
             <div class="input-group">
+                <i class="fas fa-map-marker-alt"></i>
                 <input type="text" id="alamat" placeholder="Alamat Lengkap" value="${escapeHtml(data.alamat || '')}" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-phone"></i>
                 <input type="text" id="telepon" placeholder="Nomor Telepon" value="${escapeHtml(data.telepon || '')}">
             </div>
             <div class="input-group">
+                <i class="fas fa-envelope"></i>
                 <input type="email" id="email" placeholder="Email" value="${escapeHtml(data.email || '')}">
             </div>
             <div class="input-group">
+                <i class="fas fa-image"></i>
                 <input type="text" id="foto" placeholder="URL Foto Sekretariat" value="${escapeHtml(data.foto || '')}">
             </div>
             <div class="input-group">
+                <i class="fas fa-globe"></i>
                 <input type="number" id="latitude" placeholder="Latitude" step="any" value="${data.latitude || '-6.7353'}" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-globe"></i>
                 <input type="number" id="longitude" placeholder="Longitude" step="any" value="${data.longitude || '108.5670'}" required>
             </div>
             <div class="input-group">
+                <i class="fas fa-photo-video"></i>
                 <textarea id="foto_kegiatan" placeholder="URL Foto Kegiatan (pisahkan dengan koma)">${data.foto_kegiatan ? data.foto_kegiatan.join(', ') : ''}</textarea>
+                <small style="display: block; margin-top: 5px; color: #666;">Contoh: https://contoh.com/foto1.jpg, https://contoh.com/foto2.jpg</small>
             </div>
         `;
         
@@ -794,7 +888,7 @@ function editSekretariat() {
                 // Parse foto kegiatan
                 let fotoKegiatan = [];
                 const fotoKegiatanInput = document.getElementById('foto_kegiatan')?.value;
-                if (fotoKegiatanInput) {
+                if (fotoKegiatanInput && fotoKegiatanInput.trim()) {
                     fotoKegiatan = fotoKegiatanInput.split(',').map(url => url.trim()).filter(url => url);
                 }
                 
@@ -802,7 +896,7 @@ function editSekretariat() {
                     alamat: document.getElementById('alamat')?.value || '',
                     telepon: document.getElementById('telepon')?.value || '',
                     email: document.getElementById('email')?.value || '',
-                    foto: document.getElementById('foto')?.value || '',
+                    foto: document.getElementById('foto')?.value || 'https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png',
                     latitude: parseFloat(document.getElementById('latitude')?.value) || -6.7353,
                     longitude: parseFloat(document.getElementById('longitude')?.value) || 108.5670,
                     foto_kegiatan: fotoKegiatan,
@@ -819,9 +913,10 @@ function editSekretariat() {
                     if (window.location.pathname.includes('sekretariat.html')) {
                         loadSecretariatPage();
                     }
+                    alert('✅ Data sekretariat berhasil disimpan!');
                 }).catch(error => {
                     console.error('Error saving sekretariat:', error);
-                    alert('Gagal menyimpan data sekretariat: ' + error.message);
+                    alert('❌ Gagal menyimpan data sekretariat: ' + error.message);
                 });
             };
         }
@@ -874,17 +969,65 @@ function initDefaultData() {
                 alamat: "Jl. Sunan Drajat No. 1, Sumber, Kabupaten Cirebon",
                 telepon: "(0231) 321456",
                 email: "karangtaruna@cirebonkab.go.id",
-                foto: "https://via.placeholder.com/800x400?text=Kantor+Sekretariat",
+                foto: "https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png",
                 latitude: -6.7353,
                 longitude: 108.5670,
                 foto_kegiatan: [],
                 updatedAt: new Date().toISOString()
             };
             database.ref('sekretariat').set(defaultData);
-            console.log('Data default sekretariat ditambahkan');
+            console.log('✅ Data default sekretariat ditambahkan');
+        }
+    });
+    
+    // Cek apakah ada data contoh untuk kecamatan
+    database.ref('kecamatan').once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+            const sampleKecamatan = {
+                nama: "Kecamatan Sumber",
+                ketua: "Contoh Nama Ketua",
+                status: "Aktif",
+                updatedAt: new Date().toISOString()
+            };
+            database.ref('kecamatan').push(sampleKecamatan);
+            console.log('✅ Data contoh kecamatan ditambahkan');
+        }
+    });
+    
+    // Cek apakah ada data contoh untuk struktur
+    database.ref('struktur').once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+            const sampleStruktur = [
+                {
+                    jabatan: "Ketua",
+                    nama: "Contoh Nama Ketua",
+                    alamat: "Jl. Contoh No. 123",
+                    urutan: 1,
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    jabatan: "Sekretaris",
+                    nama: "Contoh Nama Sekretaris",
+                    alamat: "Jl. Contoh No. 456",
+                    urutan: 2,
+                    updatedAt: new Date().toISOString()
+                },
+                {
+                    jabatan: "Bendahara",
+                    nama: "Contoh Nama Bendahara",
+                    alamat: "Jl. Contoh No. 789",
+                    urutan: 3,
+                    updatedAt: new Date().toISOString()
+                }
+            ];
+            
+            sampleStruktur.forEach(item => {
+                database.ref('struktur').push(item);
+            });
+            console.log('✅ Data contoh struktur ditambahkan');
         }
     });
 }
 
 // Panggil initDefaultData saat halaman dimuat
-setTimeout(initDefaultData, 1000);
+setTimeout(initDefaultData, 1500);
