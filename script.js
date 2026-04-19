@@ -8,6 +8,9 @@ let currentEditType = null;
 let previewMap = null;
 let fullMap = null;
 
+// Get database and auth references (tambahkan ini karena dihapus)
+const database = firebase.database();
+const auth = firebase.auth();
 
 // Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
@@ -49,6 +52,10 @@ function loadStats() {
         const count = snapshot.numChildren();
         const kecamatanElem = document.getElementById('kecamatanCount');
         if (kecamatanElem) kecamatanElem.textContent = count;
+    }).catch(error => {
+        console.error('Error loading kecamatan stats:', error);
+        const kecamatanElem = document.getElementById('kecamatanCount');
+        if (kecamatanElem) kecamatanElem.textContent = '0';
     });
     
     // Load desa count
@@ -56,6 +63,10 @@ function loadStats() {
         const count = snapshot.numChildren();
         const desaElem = document.getElementById('desaCount');
         if (desaElem) desaElem.textContent = count;
+    }).catch(error => {
+        console.error('Error loading desa stats:', error);
+        const desaElem = document.getElementById('desaCount');
+        if (desaElem) desaElem.textContent = '0';
     });
 }
 
@@ -81,6 +92,9 @@ function loadStructure() {
             `;
             structureContainer.innerHTML += card;
         });
+    }).catch(error => {
+        console.error('Error loading structure:', error);
+        structureContainer.innerHTML = '<div class="loading">Gagal memuat data struktur</div>';
     });
 }
 
@@ -401,6 +415,11 @@ function checkAuth() {
 
 // Dashboard Functions
 function loadDashboard() {
+    // Cek apakah elemen dashboard ada
+    if (!document.getElementById('kecamatanList')) {
+        console.log('Dashboard elements not found, skipping...');
+        return;
+    }
     loadKecamatanData();
     loadDesaData();
     loadStrukturData();
@@ -963,12 +982,12 @@ function initDefaultData() {
     database.ref('sekretariat').once('value', (snapshot) => {
         if (!snapshot.exists()) {
             const defaultData = {
-                alamat: "Jl. Sunan Drajat No. 1, Sumber, Kabupaten Cirebon",
+                alamat: "Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon",
                 telepon: "(0231) 321456",
                 email: "karangtaruna@cirebonkab.go.id",
                 foto: "https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png",
-                latitude: -6.7353,
-                longitude: 108.5670,
+                latitude: -6.740376,
+                longitude: 108.495085,
                 foto_kegiatan: [],
                 updatedAt: new Date().toISOString()
             };
