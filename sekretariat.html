@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karang Taruna Kabupaten Cirebon - Sekretariat</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>KARANG TARUNA <span>CIREBON</span></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="data.html">Data</a></li>
+                <li><a href="sekretariat.html" class="active">Sekretariat</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Sekretariat Karang Taruna</h1>
+                <p>Kabupaten Cirebon</p>
+            </div>
+        </section>
+
+        <section class="secretariat-section">
+            <div class="container">
+                <div class="secretariat-grid">
+                    <div class="secretariat-photo">
+                        <h3>Foto Sekretariat</h3>
+                        <div class="photo-gallery">
+                            <img id="mainPhoto" src="" alt="Foto Utama Sekretariat">
+                        </div>
+                    </div>
+                    <div class="secretariat-info">
+                        <h3>Informasi Sekretariat</h3>
+                        <div class="info-details">
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="address">Jl. Contoh Alamat No. 123, Kabupaten Cirebon</span></p>
+                            <p><i class="fas fa-phone"></i> <span id="phone">(0231) 123456</span></p>
+                            <p><i class="fas fa-envelope"></i> <span id="email">karangtaruna@cirebonkab.go.id</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-section">
+                    <h3>Lokasi Google Maps</h3>
+                    <div id="fullMap" class="full-map"></div>
+                </div>
+
+                <div class="additional-photos">
+                    <h3>Dokumentasi Kegiatan</h3>
+                    <div class="photo-grid" id="activityPhotos">
+                        <!-- Activity photos will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Karang Taruna Kabupaten Cirebon. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+    <script src="script.js"></script>
+</body>
+</html>
