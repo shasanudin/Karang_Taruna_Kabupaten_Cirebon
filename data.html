@@ -76,8 +76,24 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+    <!-- GANTI DENGAN INI - Firebase SDK v9 Modular -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    
+    <!-- Inisialisasi Firebase -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
+            authDomain: "karang-taruna-dalam-data.firebaseapp.com",
+            projectId: "karang-taruna-dalam-data",
+            storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
+            messagingSenderId: "922028160917",
+            appId: "1:922028160917:web:8397305a92af28c0ca689c",
+            measurementId: "G-8JNPDJPRM1"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
