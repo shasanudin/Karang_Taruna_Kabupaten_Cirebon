@@ -5,6 +5,8 @@
 let currentUser = null;
 let currentEditId = null;
 let currentEditType = null;
+let previewMap = null;
+let fullMap = null;
 
 // Get database and auth references
 const database = firebase.database();
@@ -85,6 +87,51 @@ function loadStructure() {
     });
 }
 
+// Fungsi untuk inisialisasi Leaflet map
+function initLeafletMap(elementId, latitude, longitude, zoom = 15) {
+    const mapElement = document.getElementById(elementId);
+    if (!mapElement) return null;
+    
+    // Bersihkan map jika sudah ada
+    if (mapElement._leaflet_id) {
+        try {
+            const existingMap = mapElement._leaflet_id;
+            if (existingMap) {
+                // Hapus map yang ada
+                const map = window[`map_${elementId}`];
+                if (map) map.remove();
+            }
+        } catch(e) {}
+    }
+    
+    // Cek apakah Leaflet sudah loaded
+    if (typeof L === 'undefined') {
+        console.log('Leaflet belum loaded, mencoba lagi dalam 500ms');
+        setTimeout(() => initLeafletMap(elementId, latitude, longitude, zoom), 500);
+        return null;
+    }
+    
+    try {
+        const map = L.map(elementId).setView([latitude, longitude], zoom);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        L.marker([latitude, longitude]).addTo(map)
+            .bindPopup('<b>Sekretariat Karang Taruna</b><br>Kabupaten Cirebon')
+            .openPopup();
+        
+        // Simpan reference
+        window[`map_${elementId}`] = map;
+        return map;
+    } catch(e) {
+        console.error('Error creating Leaflet map:', e);
+        mapElement.innerHTML = '<div style="padding:20px; text-align:center;">Peta tidak dapat dimuat</div>';
+        return null;
+    }
+}
+
 function loadSecretariatPreview() {
     database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
@@ -94,21 +141,21 @@ function loadSecretariatPreview() {
                 secretariatPhoto.src = data.foto || 'https://via.placeholder.com/400x300?text=Foto+Sekretariat';
             }
             
-            const previewMap = document.getElementById('previewMap');
-            if (previewMap && data.latitude && data.longitude && typeof google !== 'undefined') {
-                try {
-                    const map = new google.maps.Map(previewMap, {
-                        center: {lat: data.latitude, lng: data.longitude},
-                        zoom: 15
-                    });
-                    new google.maps.Marker({
-                        position: {lat: data.latitude, lng: data.longitude},
-                        map: map
-                    });
-                } catch(e) {
-                    console.log('Google Maps error:', e);
-                    previewMap.innerHTML = '<div class="loading">Peta tidak dapat dimuat</div>';
-                }
+            // Load map dengan Leaflet
+            const previewMapDiv = document.getElementById('previewMap');
+            if (previewMapDiv && data.latitude && data.longitude) {
+                // Tunggu sebentar untuk memastikan DOM siap
+                setTimeout(() => {
+                    initLeafletMap('previewMap', data.latitude, data.longitude, 15);
+                }, 100);
+            }
+        } else {
+            // Data default jika belum ada
+            const previewMapDiv = document.getElementById('previewMap');
+            if (previewMapDiv) {
+                setTimeout(() => {
+                    initLeafletMap('previewMap', -6.7353, 108.5670, 13);
+                }, 100);
             }
         }
     });
@@ -238,21 +285,17 @@ function loadSecretariatPage() {
             const emailElem = document.getElementById('email');
             if (emailElem) emailElem.textContent = data.email || 'karangtaruna@cirebonkab.go.id';
             
-            const fullMap = document.getElementById('fullMap');
-            if (fullMap && data.latitude && data.longitude && typeof google !== 'undefined') {
-                try {
-                    const map = new google.maps.Map(fullMap, {
-                        center: {lat: data.latitude, lng: data.longitude},
-                        zoom: 15
-                    });
-                    new google.maps.Marker({
-                        position: {lat: data.latitude, lng: data.longitude},
-                        map: map
-                    });
-                } catch(e) {
-                    console.log('Google Maps error:', e);
-                    fullMap.innerHTML = '<div class="loading">Peta tidak dapat dimuat. Periksa API Key.</div>';
-                }
+            // Load full map dengan Leaflet
+            const fullMapDiv = document.getElementById('fullMap');
+            if (fullMapDiv && data.latitude && data.longitude) {
+                setTimeout(() => {
+                    initLeafletMap('fullMap', data.latitude, data.longitude, 15);
+                }, 100);
+            } else if (fullMapDiv) {
+                // Koordinat default Kabupaten Cirebon
+                setTimeout(() => {
+                    initLeafletMap('fullMap', -6.7353, 108.5670, 13);
+                }, 100);
             }
             
             // Load activity photos
@@ -263,13 +306,21 @@ function loadSecretariatPage() {
                     data.foto_kegiatan.forEach(photo => {
                         const img = document.createElement('img');
                         img.src = photo;
-                        img.style.width = '200px';
+                        img.style.width = '100%';
                         img.style.height = '150px';
                         img.style.objectFit = 'cover';
                         img.style.borderRadius = '10px';
                         photoGrid.appendChild(img);
                     });
                 }
+            }
+        } else {
+            // Data default jika belum ada
+            const fullMapDiv = document.getElementById('fullMap');
+            if (fullMapDiv) {
+                setTimeout(() => {
+                    initLeafletMap('fullMap', -6.7353, 108.5670, 13);
+                }, 100);
             }
         }
     });
@@ -723,10 +774,13 @@ function editSekretariat() {
                 <input type="text" id="foto" placeholder="URL Foto Sekretariat" value="${escapeHtml(data.foto || '')}">
             </div>
             <div class="input-group">
-                <input type="number" id="latitude" placeholder="Latitude" step="any" value="${data.latitude || ''}" required>
+                <input type="number" id="latitude" placeholder="Latitude" step="any" value="${data.latitude || '-6.7353'}" required>
             </div>
             <div class="input-group">
-                <input type="number" id="longitude" placeholder="Longitude" step="any" value="${data.longitude || ''}" required>
+                <input type="number" id="longitude" placeholder="Longitude" step="any" value="${data.longitude || '108.5670'}" required>
+            </div>
+            <div class="input-group">
+                <textarea id="foto_kegiatan" placeholder="URL Foto Kegiatan (pisahkan dengan koma)">${data.foto_kegiatan ? data.foto_kegiatan.join(', ') : ''}</textarea>
             </div>
         `;
         
@@ -736,13 +790,22 @@ function editSekretariat() {
         if (form) {
             form.onsubmit = (e) => {
                 e.preventDefault();
+                
+                // Parse foto kegiatan
+                let fotoKegiatan = [];
+                const fotoKegiatanInput = document.getElementById('foto_kegiatan')?.value;
+                if (fotoKegiatanInput) {
+                    fotoKegiatan = fotoKegiatanInput.split(',').map(url => url.trim()).filter(url => url);
+                }
+                
                 const sekretariatData = {
                     alamat: document.getElementById('alamat')?.value || '',
                     telepon: document.getElementById('telepon')?.value || '',
                     email: document.getElementById('email')?.value || '',
                     foto: document.getElementById('foto')?.value || '',
-                    latitude: parseFloat(document.getElementById('latitude')?.value) || 0,
-                    longitude: parseFloat(document.getElementById('longitude')?.value) || 0,
+                    latitude: parseFloat(document.getElementById('latitude')?.value) || -6.7353,
+                    longitude: parseFloat(document.getElementById('longitude')?.value) || 108.5670,
+                    foto_kegiatan: fotoKegiatan,
                     updatedAt: new Date().toISOString()
                 };
                 
@@ -752,6 +815,9 @@ function editSekretariat() {
                     // Also reload preview on home page if needed
                     if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
                         loadSecretariatPreview();
+                    }
+                    if (window.location.pathname.includes('sekretariat.html')) {
+                        loadSecretariatPage();
                     }
                 }).catch(error => {
                     console.error('Error saving sekretariat:', error);
@@ -779,7 +845,7 @@ function getTypeName(type) {
 // Helper function to escape HTML
 function escapeHtml(str) {
     if (!str) return '';
-    return str
+    return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -798,3 +864,27 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+
+// Inisialisasi default data jika belum ada
+function initDefaultData() {
+    // Cek apakah data sekretariat ada
+    database.ref('sekretariat').once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+            const defaultData = {
+                alamat: "Jl. Sunan Drajat No. 1, Sumber, Kabupaten Cirebon",
+                telepon: "(0231) 321456",
+                email: "karangtaruna@cirebonkab.go.id",
+                foto: "https://via.placeholder.com/800x400?text=Kantor+Sekretariat",
+                latitude: -6.7353,
+                longitude: 108.5670,
+                foto_kegiatan: [],
+                updatedAt: new Date().toISOString()
+            };
+            database.ref('sekretariat').set(defaultData);
+            console.log('Data default sekretariat ditambahkan');
+        }
+    });
+}
+
+// Panggil initDefaultData saat halaman dimuat
+setTimeout(initDefaultData, 1000);
