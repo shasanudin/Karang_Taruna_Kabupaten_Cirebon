@@ -8,9 +8,6 @@ let currentEditType = null;
 let previewMap = null;
 let fullMap = null;
 
-// Get database and auth references
-const database = firebase.database();
-const auth = firebase.auth();
 
 // Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
