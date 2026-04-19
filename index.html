@@ -3,16 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karang Taruna Kabupaten Cirebon - Beranda</title>
+    <title>Karanga Taruna Kabupaten Cirebon - Beranda</title>
     <link rel="stylesheet" href="style.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Leaflet CSS (OpenStreetMap - Gratis) -->
+    <!-- Leaflet CSS (OpenStreetMap) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* Temporary styles for map placeholder */
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+        .logo h2 {
+            color: white;
+            font-size: 1.3rem;
+        }
+        .logo span {
+            color: #ffd700;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+            color: #ffd700;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            margin-top: 60px;
+        }
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero-content h1 span {
+            color: #ffd700;
+        }
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: #1e3c72;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #2a5298;
+        }
+        /* Stats Section */
+        .stats-section {
+            padding: 4rem 2rem;
+            background: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-icon {
+            font-size: 3rem;
+            color: #2a5298;
+            margin-bottom: 1rem;
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        /* Structure Section */
+        .structure-section {
+            padding: 4rem 2rem;
+            background: #f0f2f5;
+        }
+        .structure-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .structure-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            border-left: 4px solid #2a5298;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .structure-card h3 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+        }
+        /* Secretariat Preview */
+        .secretariat-preview {
+            padding: 4rem 2rem;
+            background: white;
+        }
+        .preview-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .preview-photo img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
         #previewMap {
             width: 100%;
             height: 300px;
@@ -35,34 +218,47 @@
         .btn-primary:hover {
             transform: translateY(-2px);
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
+        /* Footer */
+        footer {
+            background: #1e3c72;
+            color: white;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
         }
-        .stat-number {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #1e3c72;
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
         }
-        .structure-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .structure-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1.5rem;
-            border-left: 4px solid #2a5298;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
+            .preview-content {
+                grid-template-columns: 1fr;
+            }
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -70,6 +266,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
+                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna">
                 <h2>KARANG TARUNA <span>CIREBON</span></h2>
             </div>
             <ul class="nav-menu">
@@ -90,7 +287,7 @@
         <section class="hero">
             <div class="hero-content">
                 <h1>KARANG TARUNA <span>KABUPATEN CIREBON</span></h1>
-                <p>Bersama Membangun Generasi Muda yang Kreatif, Produktif, dan Berkarakter</p>
+                <p>Wadah Generasi Muda untuk Berkreasi, Beraksi, dan Membangun Daerah</p>
             </div>
         </section>
 
@@ -130,10 +327,10 @@
                 <h2 class="section-title">Sekretariat Kami</h2>
                 <div class="preview-content">
                     <div class="preview-photo">
-                        <img id="secretariatPhoto" src="https://via.placeholder.com/400x300?text=Foto+Sekretariat" alt="Foto Sekretariat" style="width:100%; height:300px; object-fit:cover; border-radius:10px;">
+                        <img id="secretariatPhoto" src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png" alt="Foto Sekretariat">
                     </div>
                     <div class="preview-map">
-                        <div id="previewMap"></div>
+                        <div id="previewMap">Memuat peta...</div>
                     </div>
                 </div>
                 <div class="text-center">
@@ -146,6 +343,7 @@
     <footer>
         <div class="container">
             <p>&copy; 2024 Karang Taruna Kabupaten Cirebon. All Rights Reserved.</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Berlandaskan Pancasila dan Undang-Undang Dasar 1945</p>
         </div>
     </footer>
 
@@ -167,23 +365,11 @@
             measurementId: "G-8JNPDJPRM1"
         };
         
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        
-        // Test database connection
-        const testDb = firebase.database();
-        testDb.ref('.info/connected').on('value', (snap) => {
-            if (snap.val() === true) {
-                console.log('✅ Terhubung ke Firebase Realtime Database');
-            } else {
-                console.log('❌ Gagal terhubung ke Firebase Realtime Database');
-            }
-        });
     </script>
     
-    <!-- Leaflet JS (OpenStreetMap - Gratis) -->
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <script src="script.js"></script>
 </body>
 </html>
