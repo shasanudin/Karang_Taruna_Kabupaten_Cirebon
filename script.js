@@ -1,4 +1,4 @@
-// Firebase sudah diinisialisasi dari HTML, kita gunakan firebase yang sudah global
+// Firebase sudah diinisialisasi dari HTML, kita gunakan window.database dan window.auth
 // Pastikan firebase sudah terload sebelum kode ini dijalankan
 
 // Global Variables
@@ -8,9 +8,9 @@ let currentEditType = null;
 let previewMap = null;
 let fullMap = null;
 
-// Get database and auth references (tambahkan ini karena dihapus)
-const database = firebase.database();
-const auth = firebase.auth();
+// Gunakan database dan auth dari window object (sudah didefinisikan di HTML)
+// HAPUS deklarasi 'const database' dan 'const auth' karena sudah dideklarasikan di HTML
+// Langsung gunakan window.database dan window.auth
 
 // Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
@@ -47,8 +47,8 @@ function loadHomePage() {
 }
 
 function loadStats() {
-    // Load kecamatan count
-    database.ref('kecamatan').once('value', (snapshot) => {
+    // Gunakan window.database
+    window.database.ref('kecamatan').once('value', (snapshot) => {
         const count = snapshot.numChildren();
         const kecamatanElem = document.getElementById('kecamatanCount');
         if (kecamatanElem) kecamatanElem.textContent = count;
@@ -59,7 +59,7 @@ function loadStats() {
     });
     
     // Load desa count
-    database.ref('desa').once('value', (snapshot) => {
+    window.database.ref('desa').once('value', (snapshot) => {
         const count = snapshot.numChildren();
         const desaElem = document.getElementById('desaCount');
         if (desaElem) desaElem.textContent = count;
@@ -74,7 +74,7 @@ function loadStructure() {
     const structureContainer = document.getElementById('structureContainer');
     if (!structureContainer) return;
     
-    database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
+    window.database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
         structureContainer.innerHTML = '';
         if (snapshot.numChildren() === 0) {
             structureContainer.innerHTML = '<div class="loading">Belum ada data struktur</div>';
@@ -156,7 +156,7 @@ function initLeafletMap(elementId, latitude, longitude, zoom = 15) {
 }
 
 function loadSecretariatPreview() {
-    database.ref('sekretariat').once('value', (snapshot) => {
+    window.database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
             const secretariatPhoto = document.getElementById('secretariatPhoto');
@@ -194,8 +194,8 @@ function loadDataPage() {
 
 function loadAllData() {
     Promise.all([
-        database.ref('kecamatan').once('value'),
-        database.ref('desa').once('value')
+        window.database.ref('kecamatan').once('value'),
+        window.database.ref('desa').once('value')
     ]).then(([kecamatanSnapshot, desaSnapshot]) => {
         const totalKecamatan = kecamatanSnapshot.numChildren();
         const totalDesa = desaSnapshot.numChildren();
@@ -269,8 +269,8 @@ function setupFilters() {
         searchInput.addEventListener('input', (e) => {
             const search = e.target.value;
             Promise.all([
-                database.ref('kecamatan').once('value'),
-                database.ref('desa').once('value')
+                window.database.ref('kecamatan').once('value'),
+                window.database.ref('desa').once('value')
             ]).then(([kecamatanSnapshot, desaSnapshot]) => {
                 displayData(kecamatanSnapshot, desaSnapshot, currentFilter, search);
             }).catch(error => {
@@ -286,8 +286,8 @@ function setupFilters() {
             currentFilter = btn.dataset.filter;
             const search = searchInput ? searchInput.value : '';
             Promise.all([
-                database.ref('kecamatan').once('value'),
-                database.ref('desa').once('value')
+                window.database.ref('kecamatan').once('value'),
+                window.database.ref('desa').once('value')
             ]).then(([kecamatanSnapshot, desaSnapshot]) => {
                 displayData(kecamatanSnapshot, desaSnapshot, currentFilter, search);
             }).catch(error => {
@@ -299,7 +299,7 @@ function setupFilters() {
 
 // Secretariat Page Functions
 function loadSecretariatPage() {
-    database.ref('sekretariat').once('value', (snapshot) => {
+    window.database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
             const mainPhoto = document.getElementById('mainPhoto');
@@ -374,7 +374,7 @@ function setupLogin() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            auth.signInWithEmailAndPassword(email, password)
+            window.auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
                     window.location.href = 'dashboard.html';
                 })
@@ -403,7 +403,7 @@ function setupLogin() {
 }
 
 function checkAuth() {
-    auth.onAuthStateChanged((user) => {
+    window.auth.onAuthStateChanged((user) => {
         if (!user && window.location.pathname.includes('dashboard.html')) {
             window.location.href = 'login.html';
         } else if (user) {
@@ -432,7 +432,7 @@ function loadKecamatanData() {
     const container = document.getElementById('kecamatanList');
     if (!container) return;
     
-    database.ref('kecamatan').once('value', (snapshot) => {
+    window.database.ref('kecamatan').once('value', (snapshot) => {
         container.innerHTML = '';
         if (snapshot.numChildren() === 0) {
             container.innerHTML = '<div class="loading">📋 Belum ada data kecamatan. Klik "Tambah Kecamatan" untuk menambahkan.</div>';
@@ -470,7 +470,7 @@ function loadDesaData() {
     const container = document.getElementById('desaList');
     if (!container) return;
     
-    database.ref('desa').once('value', (snapshot) => {
+    window.database.ref('desa').once('value', (snapshot) => {
         container.innerHTML = '';
         if (snapshot.numChildren() === 0) {
             container.innerHTML = '<div class="loading">📋 Belum ada data desa. Klik "Tambah Desa" untuk menambahkan.</div>';
@@ -509,7 +509,7 @@ function loadStrukturData() {
     const container = document.getElementById('strukturList');
     if (!container) return;
     
-    database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
+    window.database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
         container.innerHTML = '';
         if (snapshot.numChildren() === 0) {
             container.innerHTML = '<div class="loading">📋 Belum ada data struktur. Klik "Tambah Pengurus" untuk menambahkan.</div>';
@@ -547,7 +547,7 @@ function loadSekretariatData() {
     const container = document.getElementById('sekretariatInfo');
     if (!container) return;
     
-    database.ref('sekretariat').once('value', (snapshot) => {
+    window.database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
             container.innerHTML = `
@@ -592,7 +592,7 @@ function setupLogout() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            auth.signOut().then(() => {
+            window.auth.signOut().then(() => {
                 window.location.href = 'index.html';
             }).catch(error => {
                 console.error('Error logging out:', error);
@@ -698,7 +698,7 @@ function editItem(type, id) {
     
     modalTitle.textContent = `Edit ${getTypeName(type)}`;
     
-    database.ref(`${type}/${id}`).once('value', (snapshot) => {
+    window.database.ref(`${type}/${id}`).once('value', (snapshot) => {
         const data = snapshot.val();
         if (!data) return;
         
@@ -806,8 +806,8 @@ function saveData(type) {
     }
     
     const savePromise = currentEditId ? 
-        database.ref(`${type}/${currentEditId}`).update(data) :
-        database.ref(`${type}`).push(data);
+        window.database.ref(`${type}/${currentEditId}`).update(data) :
+        window.database.ref(`${type}`).push(data);
     
     savePromise.then(() => {
         closeModal();
@@ -831,7 +831,7 @@ function saveData(type) {
 
 function deleteItem(type, id) {
     if (confirm('⚠️ Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.')) {
-        database.ref(`${type}/${id}`).remove().then(() => {
+        window.database.ref(`${type}/${id}`).remove().then(() => {
             if (type === 'kecamatan') loadKecamatanData();
             else if (type === 'desa') loadDesaData();
             else if (type === 'struktur') loadStrukturData();
@@ -859,7 +859,7 @@ function editSekretariat() {
     
     modalTitle.textContent = 'Edit Informasi Sekretariat';
     
-    database.ref('sekretariat').once('value', (snapshot) => {
+    window.database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val() || {};
         
         formFields.innerHTML = `
@@ -919,7 +919,7 @@ function editSekretariat() {
                     updatedAt: new Date().toISOString()
                 };
                 
-                database.ref('sekretariat').set(sekretariatData).then(() => {
+                window.database.ref('sekretariat').set(sekretariatData).then(() => {
                     closeModal();
                     loadSekretariatData();
                     // Also reload preview on home page if needed
@@ -979,7 +979,7 @@ window.onclick = function(event) {
 // Inisialisasi default data jika belum ada
 function initDefaultData() {
     // Cek apakah data sekretariat ada
-    database.ref('sekretariat').once('value', (snapshot) => {
+    window.database.ref('sekretariat').once('value', (snapshot) => {
         if (!snapshot.exists()) {
             const defaultData = {
                 alamat: "Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon",
@@ -991,13 +991,13 @@ function initDefaultData() {
                 foto_kegiatan: [],
                 updatedAt: new Date().toISOString()
             };
-            database.ref('sekretariat').set(defaultData);
+            window.database.ref('sekretariat').set(defaultData);
             console.log('✅ Data default sekretariat ditambahkan');
         }
     });
     
     // Cek apakah ada data contoh untuk kecamatan
-    database.ref('kecamatan').once('value', (snapshot) => {
+    window.database.ref('kecamatan').once('value', (snapshot) => {
         if (!snapshot.exists()) {
             const sampleKecamatan = {
                 nama: "Kecamatan Sumber",
@@ -1005,13 +1005,13 @@ function initDefaultData() {
                 status: "Aktif",
                 updatedAt: new Date().toISOString()
             };
-            database.ref('kecamatan').push(sampleKecamatan);
+            window.database.ref('kecamatan').push(sampleKecamatan);
             console.log('✅ Data contoh kecamatan ditambahkan');
         }
     });
     
     // Cek apakah ada data contoh untuk struktur
-    database.ref('struktur').once('value', (snapshot) => {
+    window.database.ref('struktur').once('value', (snapshot) => {
         if (!snapshot.exists()) {
             const sampleStruktur = [
                 {
@@ -1038,7 +1038,7 @@ function initDefaultData() {
             ];
             
             sampleStruktur.forEach(item => {
-                database.ref('struktur').push(item);
+                window.database.ref('struktur').push(item);
             });
             console.log('✅ Data contoh struktur ditambahkan');
         }
