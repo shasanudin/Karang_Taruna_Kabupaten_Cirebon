@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karang Taruna Kabupaten Cirebon - Beranda</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>KARANG TARUNA <span>CIREBON</span></h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active">Beranda</a></li>
+                <li><a href="data.html">Data</a></li>
+                <li><a href="sekretariat.html">Sekretariat</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>KARANG TARUNA <span>KABUPATEN CIREBON</span></h1>
+                <p>Bersama Membangun Generasi Muda yang Kreatif, Produktif, dan Berkarakter</p>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="container">
+                <h2 class="section-title">Statistik Organisasi</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="stat-number" id="kecamatanCount">0</div>
+                        <div class="stat-label">Kecamatan Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="stat-number" id="desaCount">0</div>
+                        <div class="stat-label">Desa Aktif</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="structure-section">
+            <div class="container">
+                <h2 class="section-title">Struktur Pengurus Kabupaten</h2>
+                <div class="structure-container" id="structureContainer">
+                    <div class="loading">Memuat data struktur...</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="secretariat-preview">
+            <div class="container">
+                <h2 class="section-title">Sekretariat Kami</h2>
+                <div class="preview-content">
+                    <div class="preview-photo">
+                        <img id="secretariatPhoto" src="" alt="Foto Sekretariat">
+                    </div>
+                    <div class="preview-map">
+                        <div id="previewMap"></div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="sekretariat.html" class="btn-primary">Lihat Detail Sekretariat</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Karang Taruna Kabupaten Cirebon. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-database-compat.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+    <script src="script.js"></script>
+</body>
+</html>
