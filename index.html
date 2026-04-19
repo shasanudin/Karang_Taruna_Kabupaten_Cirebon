@@ -429,8 +429,12 @@
         firebase.initializeApp(firebaseConfig);
         
         // Test database connection
-        const database = firebase.database();
-        database.ref('.info/connected').on('value', (snap) => {
+        // HAPUS deklarasi 'const database' di sini karena akan dideklarasikan di script.js
+        // Gunakan window.database agar bisa diakses global tanpa re-declare
+        window.database = firebase.database();
+        window.auth = firebase.auth();
+        
+        window.database.ref('.info/connected').on('value', (snap) => {
             if (snap.val() === true) {
                 console.log('✅ Terhubung ke Firebase Realtime Database');
             } else {
