@@ -121,7 +121,98 @@
             padding: 40px;
             color: #666;
         }
+        /* Navbar styles */
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+        .logo h2 {
+            color: white;
+            font-size: 1.3rem;
+        }
+        .logo span {
+            color: #ffd700;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+            color: #ffd700;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 0;
+        }
+        footer p {
+            margin: 5px 0;
+        }
         @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+                gap: 1rem;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
             .secretariat-grid {
                 grid-template-columns: 1fr;
             }
@@ -130,6 +221,11 @@
             }
             .page-header h1 {
                 font-size: 1.8rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -175,7 +271,7 @@
                     <div class="secretariat-info">
                         <h3>Informasi Sekretariat</h3>
                         <div class="info-details">
-                            <p><i class="fas fa-map-marker-alt"></i> <span id="address">Jl. Sunan Drajat No. 1, Sumber, Kabupaten Cirebon</span></p>
+                            <p><i class="fas fa-map-marker-alt"></i> <span id="address">Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon</span></p>
                             <p><i class="fas fa-phone"></i> <span id="phone">(0231) 321456</span></p>
                             <p><i class="fas fa-envelope"></i> <span id="email">karangtaruna@cirebonkab.go.id</span></p>
                         </div>
@@ -190,7 +286,6 @@
                 <div class="additional-photos">
                     <h3>Dokumentasi Kegiatan</h3>
                     <div class="photo-grid" id="activityPhotos">
-                        <!-- Activity photos will be loaded here -->
                         <div class="loading">Memuat foto kegiatan...</div>
                     </div>
                 </div>
@@ -210,47 +305,200 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
-    <!-- Firebase Configuration - HANYA SEKALI INITIALISASI -->
-    <script>
-        // Cek apakah Firebase sudah diinisialisasi
-        if (!firebase.apps.length) {
-            const firebaseConfig = {
-                apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
-                authDomain: "karang-taruna-dalam-data.firebaseapp.com",
-                databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
-                projectId: "karang-taruna-dalam-data",
-                storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
-                messagingSenderId: "922028160917",
-                appId: "1:922028160917:web:8397305a92af28c0ca689c",
-                measurementId: "G-8JNPDJPRM1"
-            };
-            
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase initialized on sekretariat.html');
-        } else {
-            console.log('✅ Firebase already initialized, using existing instance');
-        }
-        
-        // Test database connection (gunakan variabel lokal, bukan global)
-        const db = firebase.database();
-        db.ref('.info/connected').on('value', (snap) => {
-            if (snap.val() === true) {
-                console.log('✅ Terhubung ke Firebase Realtime Database');
-                // Tambahkan indikator visual
-                const footer = document.querySelector('footer');
-                if (footer) footer.style.borderTop = '3px solid green';
-            } else {
-                console.log('❌ Gagal terhubung ke Firebase Realtime Database');
-                const footer = document.querySelector('footer');
-                if (footer) footer.style.borderTop = '3px solid red';
-            }
-        });
-    </script>
-    
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <script src="script.js"></script>
+    <!-- All JavaScript for sekretariat.html - INDEPENDENT, tidak tergantung script.js -->
+    <script>
+        // ==================== FIREBASE CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
+            authDomain: "karang-taruna-dalam-data.firebaseapp.com",
+            databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "karang-taruna-dalam-data",
+            storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
+            messagingSenderId: "922028160917",
+            appId: "1:922028160917:web:8397305a92af28c0ca689c",
+            measurementId: "G-8JNPDJPRM1"
+        };
+        
+        // Initialize Firebase (hanya sekali)
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase initialized on sekretariat.html');
+        }
+        
+        const database = firebase.database();
+        
+        // ==================== DEFAULT DATA ====================
+        const DEFAULT_SEKRETARIAT = {
+            alamat: "Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon",
+            telepon: "(0231) 321456",
+            email: "karangtaruna@cirebonkab.go.id",
+            foto: "https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png",
+            latitude: -6.740376,
+            longitude: 108.495085,
+            foto_kegiatan: [],
+            updatedAt: new Date().toISOString()
+        };
+        
+        // ==================== HELPER FUNCTIONS ====================
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        
+        function initLeafletMap(elementId, latitude, longitude, zoom = 15) {
+            const mapElement = document.getElementById(elementId);
+            if (!mapElement) return null;
+            
+            if (mapElement._leaflet_id) {
+                try {
+                    if (window[`map_${elementId}`]) {
+                        window[`map_${elementId}`].remove();
+                    }
+                } catch(e) {
+                    console.log('Error removing existing map:', e);
+                }
+            }
+            
+            if (typeof L === 'undefined') {
+                console.log('Leaflet belum loaded, mencoba lagi...');
+                setTimeout(() => initLeafletMap(elementId, latitude, longitude, zoom), 500);
+                return null;
+            }
+            
+            try {
+                mapElement.innerHTML = '';
+                const map = L.map(elementId).setView([latitude, longitude], zoom);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    maxZoom: 19
+                }).addTo(map);
+                
+                const marker = L.marker([latitude, longitude]).addTo(map);
+                marker.bindPopup(`<b>Sekretariat Karang Taruna</b><br>Kabupaten Cirebon`).openPopup();
+                
+                window[`map_${elementId}`] = map;
+                setTimeout(() => map.invalidateSize(), 200);
+                return map;
+            } catch(e) {
+                console.error('Error creating Leaflet map:', e);
+                mapElement.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">📍 Peta tidak dapat dimuat</div>';
+                return null;
+            }
+        }
+        
+        // ==================== LOAD SEKRETARIAT DATA ====================
+        function loadSecretariatPage() {
+            console.log('Loading sekretariat page...');
+            
+            database.ref('sekretariat').once('value', (snapshot) => {
+                let data = snapshot.val();
+                
+                // Jika tidak ada data di database, gunakan default (TIDAK MENYIMPAN KE DATABASE)
+                if (!data) {
+                    console.log('No data in database, using default data (not saving to database)');
+                    data = DEFAULT_SEKRETARIAT;
+                } else {
+                    console.log('Data loaded from database');
+                }
+                
+                // Update foto utama
+                const mainPhoto = document.getElementById('mainPhoto');
+                if (mainPhoto) {
+                    mainPhoto.src = data.foto || DEFAULT_SEKRETARIAT.foto;
+                }
+                
+                // Update alamat
+                const addressElem = document.getElementById('address');
+                if (addressElem) {
+                    addressElem.textContent = data.alamat || DEFAULT_SEKRETARIAT.alamat;
+                }
+                
+                // Update telepon
+                const phoneElem = document.getElementById('phone');
+                if (phoneElem) {
+                    phoneElem.textContent = data.telepon || DEFAULT_SEKRETARIAT.telepon;
+                }
+                
+                // Update email
+                const emailElem = document.getElementById('email');
+                if (emailElem) {
+                    emailElem.textContent = data.email || DEFAULT_SEKRETARIAT.email;
+                }
+                
+                // Load map
+                const fullMapDiv = document.getElementById('fullMap');
+                if (fullMapDiv) {
+                    const lat = data.latitude || DEFAULT_SEKRETARIAT.latitude;
+                    const lng = data.longitude || DEFAULT_SEKRETARIAT.longitude;
+                    setTimeout(() => {
+                        initLeafletMap('fullMap', lat, lng, 15);
+                    }, 100);
+                }
+                
+                // Load activity photos
+                const photoGrid = document.getElementById('activityPhotos');
+                if (photoGrid) {
+                    const photos = data.foto_kegiatan || [];
+                    if (photos.length > 0) {
+                        photoGrid.innerHTML = '';
+                        photos.forEach(photo => {
+                            if (photo && photo.trim()) {
+                                const img = document.createElement('img');
+                                img.src = photo;
+                                img.alt = 'Foto Kegiatan Karang Taruna';
+                                img.style.width = '100%';
+                                img.style.height = '150px';
+                                img.style.objectFit = 'cover';
+                                img.style.borderRadius = '10px';
+                                img.style.cursor = 'pointer';
+                                img.onclick = () => window.open(photo, '_blank');
+                                photoGrid.appendChild(img);
+                            }
+                        });
+                    } else {
+                        photoGrid.innerHTML = '<div class="loading">📷 Belum ada foto kegiatan</div>';
+                    }
+                }
+                
+            }).catch(error => {
+                console.error('Error loading sekretariat data:', error);
+                // Fallback ke data default jika error
+                const fullMapDiv = document.getElementById('fullMap');
+                if (fullMapDiv) {
+                    setTimeout(() => {
+                        initLeafletMap('fullMap', DEFAULT_SEKRETARIAT.latitude, DEFAULT_SEKRETARIAT.longitude, 15);
+                    }, 100);
+                }
+                
+                const photoGrid = document.getElementById('activityPhotos');
+                if (photoGrid) {
+                    photoGrid.innerHTML = '<div class="loading">❌ Gagal memuat foto kegiatan</div>';
+                }
+            });
+        }
+        
+        // ==================== NAVIGATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hamburger menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Load sekretariat data
+            loadSecretariatPage();
+        });
+    </script>
 </body>
 </html>
