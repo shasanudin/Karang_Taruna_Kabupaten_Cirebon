@@ -1,29 +1,14 @@
- // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
-    authDomain: "karang-taruna-dalam-data.firebaseapp.com",
-    projectId: "karang-taruna-dalam-data",
-    storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
-    messagingSenderId: "922028160917",
-    appId: "1:922028160917:web:8397305a92af28c0ca689c",
-    measurementId: "G-8JNPDJPRM1"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+// Firebase sudah diinisialisasi dari HTML, kita gunakan firebase yang sudah global
+// Pastikan firebase sudah terload sebelum kode ini dijalankan
 
 // Global Variables
 let currentUser = null;
 let currentEditId = null;
 let currentEditType = null;
+
+// Get database and auth references
+const database = firebase.database();
+const auth = firebase.auth();
 
 // Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
@@ -37,15 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Load page specific data
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '/index.html') {
+    const path = window.location.pathname;
+    if (path.includes('index.html') || path === '/' || path === '/index.html' || path === '') {
         loadHomePage();
-    } else if (window.location.pathname.includes('data.html')) {
+    } else if (path.includes('data.html')) {
         loadDataPage();
-    } else if (window.location.pathname.includes('sekretariat.html')) {
+    } else if (path.includes('sekretariat.html')) {
         loadSecretariatPage();
-    } else if (window.location.pathname.includes('login.html')) {
+    } else if (path.includes('login.html')) {
         setupLogin();
-    } else if (window.location.pathname.includes('dashboard.html')) {
+    } else if (path.includes('dashboard.html')) {
         checkAuth();
         loadDashboard();
     }
@@ -62,27 +48,36 @@ function loadStats() {
     // Load kecamatan count
     database.ref('kecamatan').once('value', (snapshot) => {
         const count = snapshot.numChildren();
-        document.getElementById('kecamatanCount').textContent = count;
+        const kecamatanElem = document.getElementById('kecamatanCount');
+        if (kecamatanElem) kecamatanElem.textContent = count;
     });
     
     // Load desa count
     database.ref('desa').once('value', (snapshot) => {
         const count = snapshot.numChildren();
-        document.getElementById('desaCount').textContent = count;
+        const desaElem = document.getElementById('desaCount');
+        if (desaElem) desaElem.textContent = count;
     });
 }
 
 function loadStructure() {
     const structureContainer = document.getElementById('structureContainer');
+    if (!structureContainer) return;
+    
     database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
         structureContainer.innerHTML = '';
+        if (snapshot.numChildren() === 0) {
+            structureContainer.innerHTML = '<div class="loading">Belum ada data struktur</div>';
+            return;
+        }
+        
         snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             const card = `
                 <div class="structure-card">
-                    <h3>${data.jabatan}</h3>
-                    <p><strong>Nama:</strong> ${data.nama}</p>
-                    <p><strong>Alamat:</strong> ${data.alamat || '-'}</p>
+                    <h3>${escapeHtml(data.jabatan)}</h3>
+                    <p><strong>Nama:</strong> ${escapeHtml(data.nama)}</p>
+                    <p><strong>Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p>
                 </div>
             `;
             structureContainer.innerHTML += card;
@@ -94,18 +89,26 @@ function loadSecretariatPreview() {
     database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            if (document.getElementById('secretariatPhoto')) {
-                document.getElementById('secretariatPhoto').src = data.foto || 'https://via.placeholder.com/400x300';
+            const secretariatPhoto = document.getElementById('secretariatPhoto');
+            if (secretariatPhoto) {
+                secretariatPhoto.src = data.foto || 'https://via.placeholder.com/400x300?text=Foto+Sekretariat';
             }
-            if (data.latitude && data.longitude && typeof google !== 'undefined') {
-                const map = new google.maps.Map(document.getElementById('previewMap'), {
-                    center: {lat: data.latitude, lng: data.longitude},
-                    zoom: 15
-                });
-                new google.maps.Marker({
-                    position: {lat: data.latitude, lng: data.longitude},
-                    map: map
-                });
+            
+            const previewMap = document.getElementById('previewMap');
+            if (previewMap && data.latitude && data.longitude && typeof google !== 'undefined') {
+                try {
+                    const map = new google.maps.Map(previewMap, {
+                        center: {lat: data.latitude, lng: data.longitude},
+                        zoom: 15
+                    });
+                    new google.maps.Marker({
+                        position: {lat: data.latitude, lng: data.longitude},
+                        map: map
+                    });
+                } catch(e) {
+                    console.log('Google Maps error:', e);
+                    previewMap.innerHTML = '<div class="loading">Peta tidak dapat dimuat</div>';
+                }
             }
         }
     });
@@ -125,27 +128,37 @@ function loadAllData() {
         const totalKecamatan = kecamatanSnapshot.numChildren();
         const totalDesa = desaSnapshot.numChildren();
         
-        document.getElementById('totalKecamatan').textContent = totalKecamatan;
-        document.getElementById('totalDesa').textContent = totalDesa;
+        const totalKecamatanElem = document.getElementById('totalKecamatan');
+        const totalDesaElem = document.getElementById('totalDesa');
+        if (totalKecamatanElem) totalKecamatanElem.textContent = totalKecamatan;
+        if (totalDesaElem) totalDesaElem.textContent = totalDesa;
         
         displayData(kecamatanSnapshot, desaSnapshot);
+    }).catch(error => {
+        console.error('Error loading data:', error);
+        const container = document.getElementById('dataContainer');
+        if (container) container.innerHTML = '<div class="loading">Gagal memuat data</div>';
     });
 }
 
 function displayData(kecamatanSnapshot, desaSnapshot, filter = 'all', search = '') {
     const container = document.getElementById('dataContainer');
+    if (!container) return;
     container.innerHTML = '';
+    
+    let hasData = false;
     
     if (filter === 'all' || filter === 'kecamatan') {
         kecamatanSnapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             if (search && !data.nama.toLowerCase().includes(search.toLowerCase())) return;
+            hasData = true;
             
             const card = `
                 <div class="data-item">
-                    <h3><i class="fas fa-building"></i> ${data.nama}</h3>
-                    <p><strong>Ketua:</strong> ${data.ketua || '-'}</p>
-                    <p><strong>Status:</strong> <span class="status ${data.status}">${data.status || 'Aktif'}</span></p>
+                    <h3><i class="fas fa-building"></i> ${escapeHtml(data.nama)}</h3>
+                    <p><strong>Ketua:</strong> ${escapeHtml(data.ketua || '-')}</p>
+                    <p><strong>Status:</strong> <span class="status ${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
                 </div>
             `;
             container.innerHTML += card;
@@ -156,20 +169,21 @@ function displayData(kecamatanSnapshot, desaSnapshot, filter = 'all', search = '
         desaSnapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             if (search && !data.nama.toLowerCase().includes(search.toLowerCase())) return;
+            hasData = true;
             
             const card = `
                 <div class="data-item">
-                    <h3><i class="fas fa-home"></i> ${data.nama}</h3>
-                    <p><strong>Kecamatan:</strong> ${data.kecamatan}</p>
-                    <p><strong>Ketua:</strong> ${data.ketua || '-'}</p>
-                    <p><strong>Status:</strong> <span class="status ${data.status}">${data.status || 'Aktif'}</span></p>
+                    <h3><i class="fas fa-home"></i> ${escapeHtml(data.nama)}</h3>
+                    <p><strong>Kecamatan:</strong> ${escapeHtml(data.kecamatan)}</p>
+                    <p><strong>Ketua:</strong> ${escapeHtml(data.ketua || '-')}</p>
+                    <p><strong>Status:</strong> <span class="status ${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
                 </div>
             `;
             container.innerHTML += card;
         });
     }
     
-    if (container.innerHTML === '') {
+    if (!hasData) {
         container.innerHTML = '<div class="loading">Tidak ada data ditemukan</div>';
     }
 }
@@ -212,35 +226,50 @@ function loadSecretariatPage() {
     database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            document.getElementById('mainPhoto').src = data.foto || 'https://via.placeholder.com/800x400';
-            document.getElementById('address').textContent = data.alamat || 'Jl. Contoh Alamat No. 123, Kabupaten Cirebon';
-            document.getElementById('phone').textContent = data.telepon || '(0231) 123456';
-            document.getElementById('email').textContent = data.email || 'karangtaruna@cirebonkab.go.id';
+            const mainPhoto = document.getElementById('mainPhoto');
+            if (mainPhoto) mainPhoto.src = data.foto || 'https://via.placeholder.com/800x400?text=Foto+Sekretariat';
             
-            if (data.latitude && data.longitude && typeof google !== 'undefined') {
-                const map = new google.maps.Map(document.getElementById('fullMap'), {
-                    center: {lat: data.latitude, lng: data.longitude},
-                    zoom: 15
-                });
-                new google.maps.Marker({
-                    position: {lat: data.latitude, lng: data.longitude},
-                    map: map
-                });
+            const addressElem = document.getElementById('address');
+            if (addressElem) addressElem.textContent = data.alamat || 'Jl. Contoh Alamat No. 123, Kabupaten Cirebon';
+            
+            const phoneElem = document.getElementById('phone');
+            if (phoneElem) phoneElem.textContent = data.telepon || '(0231) 123456';
+            
+            const emailElem = document.getElementById('email');
+            if (emailElem) emailElem.textContent = data.email || 'karangtaruna@cirebonkab.go.id';
+            
+            const fullMap = document.getElementById('fullMap');
+            if (fullMap && data.latitude && data.longitude && typeof google !== 'undefined') {
+                try {
+                    const map = new google.maps.Map(fullMap, {
+                        center: {lat: data.latitude, lng: data.longitude},
+                        zoom: 15
+                    });
+                    new google.maps.Marker({
+                        position: {lat: data.latitude, lng: data.longitude},
+                        map: map
+                    });
+                } catch(e) {
+                    console.log('Google Maps error:', e);
+                    fullMap.innerHTML = '<div class="loading">Peta tidak dapat dimuat. Periksa API Key.</div>';
+                }
             }
             
             // Load activity photos
-            if (data.foto_kegiatan) {
+            if (data.foto_kegiatan && Array.isArray(data.foto_kegiatan)) {
                 const photoGrid = document.getElementById('activityPhotos');
-                photoGrid.innerHTML = '';
-                data.foto_kegiatan.forEach(photo => {
-                    const img = document.createElement('img');
-                    img.src = photo;
-                    img.style.width = '200px';
-                    img.style.height = '150px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '10px';
-                    photoGrid.appendChild(img);
-                });
+                if (photoGrid) {
+                    photoGrid.innerHTML = '';
+                    data.foto_kegiatan.forEach(photo => {
+                        const img = document.createElement('img');
+                        img.src = photo;
+                        img.style.width = '200px';
+                        img.style.height = '150px';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '10px';
+                        photoGrid.appendChild(img);
+                    });
+                }
             }
         }
     });
@@ -256,11 +285,12 @@ function setupLogin() {
             const password = document.getElementById('password').value;
             
             auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
+                .then(() => {
                     window.location.href = 'dashboard.html';
                 })
                 .catch((error) => {
-                    document.getElementById('loginMessage').textContent = 'Login gagal: ' + error.message;
+                    const messageElem = document.getElementById('loginMessage');
+                    if (messageElem) messageElem.textContent = 'Login gagal: ' + error.message;
                 });
         });
     }
@@ -288,16 +318,23 @@ function loadDashboard() {
 
 function loadKecamatanData() {
     const container = document.getElementById('kecamatanList');
+    if (!container) return;
+    
     database.ref('kecamatan').once('value', (snapshot) => {
         container.innerHTML = '';
+        if (snapshot.numChildren() === 0) {
+            container.innerHTML = '<div class="loading">Belum ada data kecamatan</div>';
+            return;
+        }
+        
         snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             const item = `
                 <div class="admin-item">
                     <div>
-                        <strong>${data.nama}</strong>
-                        <p>Ketua: ${data.ketua || '-'}</p>
-                        <p>Status: ${data.status || 'Aktif'}</p>
+                        <strong>${escapeHtml(data.nama)}</strong>
+                        <p>Ketua: ${escapeHtml(data.ketua || '-')}</p>
+                        <p>Status: ${escapeHtml(data.status || 'Aktif')}</p>
                     </div>
                     <div class="admin-item-actions">
                         <button class="btn-edit-item" onclick="editItem('kecamatan', '${childSnapshot.key}')">
@@ -316,17 +353,24 @@ function loadKecamatanData() {
 
 function loadDesaData() {
     const container = document.getElementById('desaList');
+    if (!container) return;
+    
     database.ref('desa').once('value', (snapshot) => {
         container.innerHTML = '';
+        if (snapshot.numChildren() === 0) {
+            container.innerHTML = '<div class="loading">Belum ada data desa</div>';
+            return;
+        }
+        
         snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             const item = `
                 <div class="admin-item">
                     <div>
-                        <strong>${data.nama}</strong>
-                        <p>Kecamatan: ${data.kecamatan}</p>
-                        <p>Ketua: ${data.ketua || '-'}</p>
-                        <p>Status: ${data.status || 'Aktif'}</p>
+                        <strong>${escapeHtml(data.nama)}</strong>
+                        <p>Kecamatan: ${escapeHtml(data.kecamatan)}</p>
+                        <p>Ketua: ${escapeHtml(data.ketua || '-')}</p>
+                        <p>Status: ${escapeHtml(data.status || 'Aktif')}</p>
                     </div>
                     <div class="admin-item-actions">
                         <button class="btn-edit-item" onclick="editItem('desa', '${childSnapshot.key}')">
@@ -345,16 +389,23 @@ function loadDesaData() {
 
 function loadStrukturData() {
     const container = document.getElementById('strukturList');
+    if (!container) return;
+    
     database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
         container.innerHTML = '';
+        if (snapshot.numChildren() === 0) {
+            container.innerHTML = '<div class="loading">Belum ada data struktur</div>';
+            return;
+        }
+        
         snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             const item = `
                 <div class="admin-item">
                     <div>
-                        <strong>${data.jabatan}</strong>
-                        <p>Nama: ${data.nama}</p>
-                        <p>Alamat: ${data.alamat || '-'}</p>
+                        <strong>${escapeHtml(data.jabatan)}</strong>
+                        <p>Nama: ${escapeHtml(data.nama)}</p>
+                        <p>Alamat: ${escapeHtml(data.alamat || '-')}</p>
                     </div>
                     <div class="admin-item-actions">
                         <button class="btn-edit-item" onclick="editItem('struktur', '${childSnapshot.key}')">
@@ -373,20 +424,24 @@ function loadStrukturData() {
 
 function loadSekretariatData() {
     const container = document.getElementById('sekretariatInfo');
+    if (!container) return;
+    
     database.ref('sekretariat').once('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
             container.innerHTML = `
                 <div class="admin-item">
                     <div>
-                        <p><strong>Alamat:</strong> ${data.alamat}</p>
-                        <p><strong>Telepon:</strong> ${data.telepon}</p>
-                        <p><strong>Email:</strong> ${data.email}</p>
-                        <p><strong>Latitude:</strong> ${data.latitude}</p>
-                        <p><strong>Longitude:</strong> ${data.longitude}</p>
+                        <p><strong>Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p>
+                        <p><strong>Telepon:</strong> ${escapeHtml(data.telepon || '-')}</p>
+                        <p><strong>Email:</strong> ${escapeHtml(data.email || '-')}</p>
+                        <p><strong>Latitude:</strong> ${data.latitude || '-'}</p>
+                        <p><strong>Longitude:</strong> ${data.longitude || '-'}</p>
                     </div>
                 </div>
             `;
+        } else {
+            container.innerHTML = '<div class="loading">Belum ada data sekretariat</div>';
         }
     });
 }
@@ -402,7 +457,8 @@ function setupTabs() {
                 content.classList.remove('active');
             });
             
-            document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            const targetTab = document.getElementById(`${tab.dataset.tab}Tab`);
+            if (targetTab) targetTab.classList.add('active');
         });
     });
 }
@@ -426,6 +482,8 @@ function showAddForm(type) {
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modalTitle');
     const formFields = document.getElementById('formFields');
+    
+    if (!modal || !modalTitle || !formFields) return;
     
     modalTitle.textContent = `Tambah ${getTypeName(type)}`;
     
@@ -484,10 +542,12 @@ function showAddForm(type) {
     modal.style.display = 'block';
     
     const form = document.getElementById('dataForm');
-    form.onsubmit = (e) => {
-        e.preventDefault();
-        saveData(type);
-    };
+    if (form) {
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            saveData(type);
+        };
+    }
 }
 
 function editItem(type, id) {
@@ -497,19 +557,22 @@ function editItem(type, id) {
     const modalTitle = document.getElementById('modalTitle');
     const formFields = document.getElementById('formFields');
     
+    if (!modal || !modalTitle || !formFields) return;
+    
     modalTitle.textContent = `Edit ${getTypeName(type)}`;
     
     database.ref(`${type}/${id}`).once('value', (snapshot) => {
         const data = snapshot.val();
+        if (!data) return;
         
         let fields = '';
         if (type === 'kecamatan') {
             fields = `
                 <div class="input-group">
-                    <input type="text" id="nama" placeholder="Nama Kecamatan" value="${data.nama || ''}" required>
+                    <input type="text" id="nama" placeholder="Nama Kecamatan" value="${escapeHtml(data.nama || '')}" required>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="ketua" placeholder="Nama Ketua" value="${data.ketua || ''}">
+                    <input type="text" id="ketua" placeholder="Nama Ketua" value="${escapeHtml(data.ketua || '')}">
                 </div>
                 <div class="input-group">
                     <select id="status">
@@ -521,13 +584,13 @@ function editItem(type, id) {
         } else if (type === 'desa') {
             fields = `
                 <div class="input-group">
-                    <input type="text" id="nama" placeholder="Nama Desa" value="${data.nama || ''}" required>
+                    <input type="text" id="nama" placeholder="Nama Desa" value="${escapeHtml(data.nama || '')}" required>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="kecamatan" placeholder="Nama Kecamatan" value="${data.kecamatan || ''}" required>
+                    <input type="text" id="kecamatan" placeholder="Nama Kecamatan" value="${escapeHtml(data.kecamatan || '')}" required>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="ketua" placeholder="Nama Ketua" value="${data.ketua || ''}">
+                    <input type="text" id="ketua" placeholder="Nama Ketua" value="${escapeHtml(data.ketua || '')}">
                 </div>
                 <div class="input-group">
                     <select id="status">
@@ -539,13 +602,13 @@ function editItem(type, id) {
         } else if (type === 'struktur') {
             fields = `
                 <div class="input-group">
-                    <input type="text" id="jabatan" placeholder="Jabatan" value="${data.jabatan || ''}" required>
+                    <input type="text" id="jabatan" placeholder="Jabatan" value="${escapeHtml(data.jabatan || '')}" required>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="nama" placeholder="Nama Lengkap" value="${data.nama || ''}" required>
+                    <input type="text" id="nama" placeholder="Nama Lengkap" value="${escapeHtml(data.nama || '')}" required>
                 </div>
                 <div class="input-group">
-                    <input type="text" id="alamat" placeholder="Alamat" value="${data.alamat || ''}">
+                    <input type="text" id="alamat" placeholder="Alamat" value="${escapeHtml(data.alamat || '')}">
                 </div>
                 <div class="input-group">
                     <input type="number" id="urutan" placeholder="Urutan Tampil" value="${data.urutan || 0}">
@@ -557,10 +620,12 @@ function editItem(type, id) {
         modal.style.display = 'block';
         
         const form = document.getElementById('dataForm');
-        form.onsubmit = (e) => {
-            e.preventDefault();
-            saveData(type);
-        };
+        if (form) {
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                saveData(type);
+            };
+        }
     });
 }
 
@@ -569,25 +634,25 @@ function saveData(type) {
     
     if (type === 'kecamatan') {
         data = {
-            nama: document.getElementById('nama').value,
-            ketua: document.getElementById('ketua').value,
-            status: document.getElementById('status').value,
+            nama: document.getElementById('nama')?.value || '',
+            ketua: document.getElementById('ketua')?.value || '',
+            status: document.getElementById('status')?.value || 'Aktif',
             updatedAt: new Date().toISOString()
         };
     } else if (type === 'desa') {
         data = {
-            nama: document.getElementById('nama').value,
-            kecamatan: document.getElementById('kecamatan').value,
-            ketua: document.getElementById('ketua').value,
-            status: document.getElementById('status').value,
+            nama: document.getElementById('nama')?.value || '',
+            kecamatan: document.getElementById('kecamatan')?.value || '',
+            ketua: document.getElementById('ketua')?.value || '',
+            status: document.getElementById('status')?.value || 'Aktif',
             updatedAt: new Date().toISOString()
         };
     } else if (type === 'struktur') {
         data = {
-            jabatan: document.getElementById('jabatan').value,
-            nama: document.getElementById('nama').value,
-            alamat: document.getElementById('alamat').value,
-            urutan: parseInt(document.getElementById('urutan').value) || 0,
+            jabatan: document.getElementById('jabatan')?.value || '',
+            nama: document.getElementById('nama')?.value || '',
+            alamat: document.getElementById('alamat')?.value || '',
+            urutan: parseInt(document.getElementById('urutan')?.value) || 0,
             updatedAt: new Date().toISOString()
         };
     }
@@ -602,6 +667,14 @@ function saveData(type) {
         if (type === 'kecamatan') loadKecamatanData();
         else if (type === 'desa') loadDesaData();
         else if (type === 'struktur') loadStrukturData();
+        
+        // Also reload home page stats if on home page
+        if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+            loadStats();
+        }
+    }).catch(error => {
+        console.error('Error saving data:', error);
+        alert('Gagal menyimpan data: ' + error.message);
     });
 }
 
@@ -611,6 +684,14 @@ function deleteItem(type, id) {
             if (type === 'kecamatan') loadKecamatanData();
             else if (type === 'desa') loadDesaData();
             else if (type === 'struktur') loadStrukturData();
+            
+            // Also reload home page stats if on home page
+            if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+                loadStats();
+            }
+        }).catch(error => {
+            console.error('Error deleting data:', error);
+            alert('Gagal menghapus data: ' + error.message);
         });
     }
 }
@@ -621,6 +702,8 @@ function editSekretariat() {
     const modalTitle = document.getElementById('modalTitle');
     const formFields = document.getElementById('formFields');
     
+    if (!modal || !modalTitle || !formFields) return;
+    
     modalTitle.textContent = 'Edit Informasi Sekretariat';
     
     database.ref('sekretariat').once('value', (snapshot) => {
@@ -628,16 +711,16 @@ function editSekretariat() {
         
         formFields.innerHTML = `
             <div class="input-group">
-                <input type="text" id="alamat" placeholder="Alamat Lengkap" value="${data.alamat || ''}" required>
+                <input type="text" id="alamat" placeholder="Alamat Lengkap" value="${escapeHtml(data.alamat || '')}" required>
             </div>
             <div class="input-group">
-                <input type="text" id="telepon" placeholder="Nomor Telepon" value="${data.telepon || ''}">
+                <input type="text" id="telepon" placeholder="Nomor Telepon" value="${escapeHtml(data.telepon || '')}">
             </div>
             <div class="input-group">
-                <input type="email" id="email" placeholder="Email" value="${data.email || ''}">
+                <input type="email" id="email" placeholder="Email" value="${escapeHtml(data.email || '')}">
             </div>
             <div class="input-group">
-                <input type="text" id="foto" placeholder="URL Foto Sekretariat" value="${data.foto || ''}">
+                <input type="text" id="foto" placeholder="URL Foto Sekretariat" value="${escapeHtml(data.foto || '')}">
             </div>
             <div class="input-group">
                 <input type="number" id="latitude" placeholder="Latitude" step="any" value="${data.latitude || ''}" required>
@@ -650,29 +733,38 @@ function editSekretariat() {
         modal.style.display = 'block';
         
         const form = document.getElementById('dataForm');
-        form.onsubmit = (e) => {
-            e.preventDefault();
-            const sekretariatData = {
-                alamat: document.getElementById('alamat').value,
-                telepon: document.getElementById('telepon').value,
-                email: document.getElementById('email').value,
-                foto: document.getElementById('foto').value,
-                latitude: parseFloat(document.getElementById('latitude').value),
-                longitude: parseFloat(document.getElementById('longitude').value),
-                updatedAt: new Date().toISOString()
+        if (form) {
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const sekretariatData = {
+                    alamat: document.getElementById('alamat')?.value || '',
+                    telepon: document.getElementById('telepon')?.value || '',
+                    email: document.getElementById('email')?.value || '',
+                    foto: document.getElementById('foto')?.value || '',
+                    latitude: parseFloat(document.getElementById('latitude')?.value) || 0,
+                    longitude: parseFloat(document.getElementById('longitude')?.value) || 0,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                database.ref('sekretariat').set(sekretariatData).then(() => {
+                    closeModal();
+                    loadSekretariatData();
+                    // Also reload preview on home page if needed
+                    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+                        loadSecretariatPreview();
+                    }
+                }).catch(error => {
+                    console.error('Error saving sekretariat:', error);
+                    alert('Gagal menyimpan data sekretariat: ' + error.message);
+                });
             };
-            
-            database.ref('sekretariat').set(sekretariatData).then(() => {
-                closeModal();
-                loadSekretariatData();
-            });
-        };
+        }
     });
 }
 
 function closeModal() {
     const modal = document.getElementById('modal');
-    modal.style.display = 'none';
+    if (modal) modal.style.display = 'none';
 }
 
 function getTypeName(type) {
@@ -684,8 +776,20 @@ function getTypeName(type) {
     return names[type] || type;
 }
 
+// Helper function to escape HTML
+function escapeHtml(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // Close modal when clicking on X
-document.querySelector('.close')?.addEventListener('click', closeModal);
+const closeBtn = document.querySelector('.close');
+if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
 // Close modal when clicking outside
 window.onclick = function(event) {
