@@ -4,15 +4,410 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Karang Taruna Cirebon</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+        .logo h2 {
+            color: white;
+            font-size: 1.3rem;
+        }
+        .logo span {
+            color: #ffd700;
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .nav-menu a:hover {
+            background: rgba(255,255,255,0.2);
+            color: #ffd700;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        
+        /* Dashboard Header */
+        .dashboard-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 6rem 2rem 3rem;
+            text-align: center;
+            margin-top: 0;
+        }
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        /* Dashboard Tabs */
+        .dashboard-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.5rem;
+        }
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s ease;
+            border-radius: 10px 10px 0 0;
+        }
+        .tab-btn:hover {
+            color: #2a5298;
+            background: rgba(42,82,152,0.1);
+        }
+        .tab-btn.active {
+            color: #2a5298;
+            border-bottom: 3px solid #2a5298;
+            background: rgba(42,82,152,0.05);
+        }
+        .tab-content {
+            display: none;
+            margin-top: 2rem;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Admin Actions */
+        .admin-actions {
+            margin-bottom: 1.5rem;
+        }
+        .btn-add, .btn-edit {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-add:hover, .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39,174,96,0.3);
+        }
+        .btn-edit {
+            background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+        }
+        .btn-edit:hover {
+            box-shadow: 0 5px 15px rgba(230,126,34,0.3);
+        }
+        
+        /* Admin List */
+        .admin-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+        .admin-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        .admin-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+        .admin-item div:first-child {
+            flex: 1;
+        }
+        .admin-item strong {
+            color: #1e3c72;
+            font-size: 1rem;
+        }
+        .admin-item p {
+            margin: 5px 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .admin-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-edit-item, .btn-delete-item {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-edit-item {
+            background: #3498db;
+            color: white;
+        }
+        .btn-edit-item:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+        .btn-delete-item {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-delete-item:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        
+        /* Sekretariat Admin */
+        .sekretariat-admin {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 15px;
+            position: relative;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+        .close:hover {
+            color: #333;
+        }
+        .modal-content h2 {
+            color: #1e3c72;
+            margin-bottom: 1.5rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .input-group textarea {
+            padding-left: 1rem;
+            min-height: 80px;
+            resize: vertical;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39,174,96,0.3);
+        }
+        
+        /* Status */
+        .status-active {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                padding: 2rem 0;
+                gap: 1rem;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
+            .dashboard-tabs {
+                justify-content: center;
+            }
+            .admin-list {
+                grid-template-columns: 1fr;
+            }
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+            .dashboard-header {
+                padding: 5rem 1rem 2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+            .modal-content {
+                margin: 20% auto;
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna" class="logo-img">
+                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna">
                 <h2>KARANG TARUNA <span>CIREBON</span></h2>
             </div>
             <ul class="nav-menu">
@@ -52,7 +447,7 @@
                             <i class="fas fa-plus"></i> Tambah Kecamatan
                         </button>
                     </div>
-                    <div id="kecamatanList" class="admin-list"></div>
+                    <div id="kecamatanList" class="admin-list"><div class="loading">Memuat data...</div></div>
                 </div>
 
                 <div id="desaTab" class="tab-content">
@@ -61,7 +456,7 @@
                             <i class="fas fa-plus"></i> Tambah Desa
                         </button>
                     </div>
-                    <div id="desaList" class="admin-list"></div>
+                    <div id="desaList" class="admin-list"><div class="loading">Memuat data...</div></div>
                 </div>
 
                 <div id="strukturTab" class="tab-content">
@@ -70,7 +465,7 @@
                             <i class="fas fa-plus"></i> Tambah Pengurus
                         </button>
                     </div>
-                    <div id="strukturList" class="admin-list"></div>
+                    <div id="strukturList" class="admin-list"><div class="loading">Memuat data...</div></div>
                 </div>
 
                 <div id="sekretariatTab" class="tab-content">
@@ -79,7 +474,7 @@
                             <i class="fas fa-edit"></i> Edit Informasi Sekretariat
                         </button>
                     </div>
-                    <div id="sekretariatInfo" class="sekretariat-admin"></div>
+                    <div id="sekretariatInfo" class="sekretariat-admin"><div class="loading">Memuat data...</div></div>
                 </div>
             </div>
         </section>
@@ -109,8 +504,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
-    <!-- Firebase Configuration -->
+    <!-- All JavaScript for dashboard.html - INDEPENDENT -->
     <script>
+        // ==================== FIREBASE CONFIGURATION ====================
         const firebaseConfig = {
             apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
             authDomain: "karang-taruna-dalam-data.firebaseapp.com",
@@ -122,9 +518,586 @@
             measurementId: "G-8JNPDJPRM1"
         };
         
-        firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        const database = firebase.database();
+        const auth = firebase.auth();
+        
+        // ==================== GLOBAL VARIABLES ====================
+        let currentUser = null;
+        let currentEditId = null;
+        let currentEditType = null;
+        
+        // ==================== HELPER FUNCTIONS ====================
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        
+        function getTypeName(type) {
+            const names = {
+                'kecamatan': 'Kecamatan',
+                'desa': 'Desa',
+                'struktur': 'Pengurus'
+            };
+            return names[type] || type;
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            if (modal) modal.style.display = 'none';
+            currentEditId = null;
+            currentEditType = null;
+        }
+        
+        // ==================== AUTHENTICATION ====================
+        function checkAuth() {
+            auth.onAuthStateChanged((user) => {
+                if (!user) {
+                    window.location.href = 'login.html';
+                } else {
+                    currentUser = user;
+                    console.log('Admin logged in:', user.email);
+                    loadDashboard();
+                }
+            });
+        }
+        
+        function setupLogout() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    auth.signOut().then(() => {
+                        window.location.href = 'index.html';
+                    }).catch(error => {
+                        console.error('Error logging out:', error);
+                        alert('Gagal logout: ' + error.message);
+                    });
+                });
+            }
+        }
+        
+        // ==================== DASHBOARD LOAD FUNCTIONS ====================
+        function loadDashboard() {
+            loadKecamatanData();
+            loadDesaData();
+            loadStrukturData();
+            loadSekretariatData();
+            setupTabs();
+            setupLogout();
+        }
+        
+        function loadKecamatanData() {
+            const container = document.getElementById('kecamatanList');
+            if (!container) return;
+            
+            database.ref('kecamatan').once('value', (snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.numChildren() === 0) {
+                    container.innerHTML = '<div class="loading">📋 Belum ada data kecamatan. Klik "Tambah Kecamatan" untuk menambahkan.</div>';
+                    return;
+                }
+                
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    const item = `
+                        <div class="admin-item">
+                            <div>
+                                <strong>🏢 ${escapeHtml(data.nama)}</strong>
+                                <p>👤 Ketua: ${escapeHtml(data.ketua || '-')}</p>
+                                <p>📊 Status: <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
+                            </div>
+                            <div class="admin-item-actions">
+                                <button class="btn-edit-item" onclick="editItem('kecamatan', '${childSnapshot.key}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete-item" onclick="deleteItem('kecamatan', '${childSnapshot.key}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += item;
+                });
+            }).catch(error => {
+                console.error('Error loading kecamatan:', error);
+                container.innerHTML = '<div class="loading">❌ Gagal memuat data kecamatan</div>';
+            });
+        }
+        
+        function loadDesaData() {
+            const container = document.getElementById('desaList');
+            if (!container) return;
+            
+            database.ref('desa').once('value', (snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.numChildren() === 0) {
+                    container.innerHTML = '<div class="loading">📋 Belum ada data desa. Klik "Tambah Desa" untuk menambahkan.</div>';
+                    return;
+                }
+                
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    const item = `
+                        <div class="admin-item">
+                            <div>
+                                <strong>🏘️ ${escapeHtml(data.nama)}</strong>
+                                <p>📍 Kecamatan: ${escapeHtml(data.kecamatan)}</p>
+                                <p>👤 Ketua: ${escapeHtml(data.ketua || '-')}</p>
+                                <p>📊 Status: <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p>
+                            </div>
+                            <div class="admin-item-actions">
+                                <button class="btn-edit-item" onclick="editItem('desa', '${childSnapshot.key}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete-item" onclick="deleteItem('desa', '${childSnapshot.key}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += item;
+                });
+            }).catch(error => {
+                console.error('Error loading desa:', error);
+                container.innerHTML = '<div class="loading">❌ Gagal memuat data desa</div>';
+            });
+        }
+        
+        function loadStrukturData() {
+            const container = document.getElementById('strukturList');
+            if (!container) return;
+            
+            database.ref('struktur').orderByChild('urutan').once('value', (snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.numChildren() === 0) {
+                    container.innerHTML = '<div class="loading">📋 Belum ada data struktur. Klik "Tambah Pengurus" untuk menambahkan.</div>';
+                    return;
+                }
+                
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    const item = `
+                        <div class="admin-item">
+                            <div>
+                                <strong>📌 ${escapeHtml(data.jabatan)}</strong>
+                                <p>👤 Nama: ${escapeHtml(data.nama)}</p>
+                                <p>📍 Alamat: ${escapeHtml(data.alamat || '-')}</p>
+                            </div>
+                            <div class="admin-item-actions">
+                                <button class="btn-edit-item" onclick="editItem('struktur', '${childSnapshot.key}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-delete-item" onclick="deleteItem('struktur', '${childSnapshot.key}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += item;
+                });
+            }).catch(error => {
+                console.error('Error loading struktur:', error);
+                container.innerHTML = '<div class="loading">❌ Gagal memuat data struktur</div>';
+            });
+        }
+        
+        function loadSekretariatData() {
+            const container = document.getElementById('sekretariatInfo');
+            if (!container) return;
+            
+            database.ref('sekretariat').once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    container.innerHTML = `
+                        <div class="admin-item">
+                            <div>
+                                <p><strong>📍 Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p>
+                                <p><strong>📞 Telepon:</strong> ${escapeHtml(data.telepon || '-')}</p>
+                                <p><strong>📧 Email:</strong> ${escapeHtml(data.email || '-')}</p>
+                                <p><strong>🌐 Latitude:</strong> ${data.latitude || '-'}</p>
+                                <p><strong>🌐 Longitude:</strong> ${data.longitude || '-'}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<div class="loading">📋 Belum ada data sekretariat. Klik "Edit Informasi Sekretariat" untuk menambahkan.</div>';
+                }
+            }).catch(error => {
+                console.error('Error loading sekretariat:', error);
+                container.innerHTML = '<div class="loading">❌ Gagal memuat data sekretariat</div>';
+            });
+        }
+        
+        // ==================== CRUD FUNCTIONS ====================
+        function showAddForm(type) {
+            currentEditType = type;
+            currentEditId = null;
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const formFields = document.getElementById('formFields');
+            
+            if (!modal || !modalTitle || !formFields) return;
+            
+            modalTitle.textContent = `Tambah ${getTypeName(type)}`;
+            
+            let fields = '';
+            if (type === 'kecamatan') {
+                fields = `
+                    <div class="input-group">
+                        <i class="fas fa-building"></i>
+                        <input type="text" id="nama" placeholder="Nama Kecamatan" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="ketua" placeholder="Nama Ketua">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-flag-checkered"></i>
+                        <select id="status">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
+                        </select>
+                    </div>
+                `;
+            } else if (type === 'desa') {
+                fields = `
+                    <div class="input-group">
+                        <i class="fas fa-home"></i>
+                        <input type="text" id="nama" placeholder="Nama Desa" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-building"></i>
+                        <input type="text" id="kecamatan" placeholder="Nama Kecamatan" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="ketua" placeholder="Nama Ketua">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-flag-checkered"></i>
+                        <select id="status">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
+                        </select>
+                    </div>
+                `;
+            } else if (type === 'struktur') {
+                fields = `
+                    <div class="input-group">
+                        <i class="fas fa-tag"></i>
+                        <input type="text" id="jabatan" placeholder="Jabatan" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="nama" placeholder="Nama Lengkap" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="alamat" placeholder="Alamat">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-sort-numeric-down"></i>
+                        <input type="number" id="urutan" placeholder="Urutan Tampil">
+                    </div>
+                `;
+            }
+            
+            formFields.innerHTML = fields;
+            modal.style.display = 'block';
+            
+            const form = document.getElementById('dataForm');
+            if (form) {
+                form.onsubmit = (e) => {
+                    e.preventDefault();
+                    saveData(type);
+                };
+            }
+        }
+        
+        function editItem(type, id) {
+            currentEditType = type;
+            currentEditId = id;
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const formFields = document.getElementById('formFields');
+            
+            if (!modal || !modalTitle || !formFields) return;
+            
+            modalTitle.textContent = `Edit ${getTypeName(type)}`;
+            
+            database.ref(`${type}/${id}`).once('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
+                
+                let fields = '';
+                if (type === 'kecamatan') {
+                    fields = `
+                        <div class="input-group">
+                            <i class="fas fa-building"></i>
+                            <input type="text" id="nama" placeholder="Nama Kecamatan" value="${escapeHtml(data.nama || '')}" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="ketua" placeholder="Nama Ketua" value="${escapeHtml(data.ketua || '')}">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-flag-checkered"></i>
+                            <select id="status">
+                                <option value="Aktif" ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option>
+                                <option value="Tidak Aktif" ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option>
+                            </select>
+                        </div>
+                    `;
+                } else if (type === 'desa') {
+                    fields = `
+                        <div class="input-group">
+                            <i class="fas fa-home"></i>
+                            <input type="text" id="nama" placeholder="Nama Desa" value="${escapeHtml(data.nama || '')}" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-building"></i>
+                            <input type="text" id="kecamatan" placeholder="Nama Kecamatan" value="${escapeHtml(data.kecamatan || '')}" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="ketua" placeholder="Nama Ketua" value="${escapeHtml(data.ketua || '')}">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-flag-checkered"></i>
+                            <select id="status">
+                                <option value="Aktif" ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option>
+                                <option value="Tidak Aktif" ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option>
+                            </select>
+                        </div>
+                    `;
+                } else if (type === 'struktur') {
+                    fields = `
+                        <div class="input-group">
+                            <i class="fas fa-tag"></i>
+                            <input type="text" id="jabatan" placeholder="Jabatan" value="${escapeHtml(data.jabatan || '')}" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="nama" placeholder="Nama Lengkap" value="${escapeHtml(data.nama || '')}" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="alamat" placeholder="Alamat" value="${escapeHtml(data.alamat || '')}">
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-sort-numeric-down"></i>
+                            <input type="number" id="urutan" placeholder="Urutan Tampil" value="${data.urutan || 0}">
+                        </div>
+                    `;
+                }
+                
+                formFields.innerHTML = fields;
+                modal.style.display = 'block';
+                
+                const form = document.getElementById('dataForm');
+                if (form) {
+                    form.onsubmit = (e) => {
+                        e.preventDefault();
+                        saveData(type);
+                    };
+                }
+            });
+        }
+        
+        function saveData(type) {
+            let data = {};
+            
+            if (type === 'kecamatan') {
+                data = {
+                    nama: document.getElementById('nama')?.value || '',
+                    ketua: document.getElementById('ketua')?.value || '',
+                    status: document.getElementById('status')?.value || 'Aktif',
+                    updatedAt: new Date().toISOString()
+                };
+            } else if (type === 'desa') {
+                data = {
+                    nama: document.getElementById('nama')?.value || '',
+                    kecamatan: document.getElementById('kecamatan')?.value || '',
+                    ketua: document.getElementById('ketua')?.value || '',
+                    status: document.getElementById('status')?.value || 'Aktif',
+                    updatedAt: new Date().toISOString()
+                };
+            } else if (type === 'struktur') {
+                data = {
+                    jabatan: document.getElementById('jabatan')?.value || '',
+                    nama: document.getElementById('nama')?.value || '',
+                    alamat: document.getElementById('alamat')?.value || '',
+                    urutan: parseInt(document.getElementById('urutan')?.value) || 0,
+                    updatedAt: new Date().toISOString()
+                };
+            }
+            
+            const savePromise = currentEditId ? 
+                database.ref(`${type}/${currentEditId}`).update(data) :
+                database.ref(`${type}`).push(data);
+            
+            savePromise.then(() => {
+                closeModal();
+                if (type === 'kecamatan') loadKecamatanData();
+                else if (type === 'desa') loadDesaData();
+                else if (type === 'struktur') loadStrukturData();
+                alert('✅ Data berhasil disimpan!');
+            }).catch(error => {
+                console.error('Error saving data:', error);
+                alert('❌ Gagal menyimpan data: ' + error.message);
+            });
+        }
+        
+        function deleteItem(type, id) {
+            if (confirm('⚠️ Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.')) {
+                database.ref(`${type}/${id}`).remove().then(() => {
+                    if (type === 'kecamatan') loadKecamatanData();
+                    else if (type === 'desa') loadDesaData();
+                    else if (type === 'struktur') loadStrukturData();
+                    alert('✅ Data berhasil dihapus!');
+                }).catch(error => {
+                    console.error('Error deleting data:', error);
+                    alert('❌ Gagal menghapus data: ' + error.message);
+                });
+            }
+        }
+        
+        function editSekretariat() {
+            currentEditType = 'sekretariat';
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const formFields = document.getElementById('formFields');
+            
+            if (!modal || !modalTitle || !formFields) return;
+            
+            modalTitle.textContent = 'Edit Informasi Sekretariat';
+            
+            database.ref('sekretariat').once('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                
+                formFields.innerHTML = `
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="alamat" placeholder="Alamat Lengkap" value="${escapeHtml(data.alamat || '')}" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="text" id="telepon" placeholder="Nomor Telepon" value="${escapeHtml(data.telepon || '')}">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Email" value="${escapeHtml(data.email || '')}">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-image"></i>
+                        <input type="text" id="foto" placeholder="URL Foto Sekretariat" value="${escapeHtml(data.foto || '')}">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-globe"></i>
+                        <input type="number" id="latitude" placeholder="Latitude" step="any" value="${data.latitude || '-6.7353'}" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-globe"></i>
+                        <input type="number" id="longitude" placeholder="Longitude" step="any" value="${data.longitude || '108.5670'}" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-photo-video"></i>
+                        <textarea id="foto_kegiatan" placeholder="URL Foto Kegiatan (pisahkan dengan koma)">${data.foto_kegiatan ? data.foto_kegiatan.join(', ') : ''}</textarea>
+                        <small style="display: block; margin-top: 5px; color: #666;">Contoh: https://contoh.com/foto1.jpg, https://contoh.com/foto2.jpg</small>
+                    </div>
+                `;
+                
+                modal.style.display = 'block';
+                
+                const form = document.getElementById('dataForm');
+                if (form) {
+                    form.onsubmit = (e) => {
+                        e.preventDefault();
+                        
+                        let fotoKegiatan = [];
+                        const fotoKegiatanInput = document.getElementById('foto_kegiatan')?.value;
+                        if (fotoKegiatanInput && fotoKegiatanInput.trim()) {
+                            fotoKegiatan = fotoKegiatanInput.split(',').map(url => url.trim()).filter(url => url);
+                        }
+                        
+                        const sekretariatData = {
+                            alamat: document.getElementById('alamat')?.value || '',
+                            telepon: document.getElementById('telepon')?.value || '',
+                            email: document.getElementById('email')?.value || '',
+                            foto: document.getElementById('foto')?.value || 'https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png',
+                            latitude: parseFloat(document.getElementById('latitude')?.value) || -6.7353,
+                            longitude: parseFloat(document.getElementById('longitude')?.value) || 108.5670,
+                            foto_kegiatan: fotoKegiatan,
+                            updatedAt: new Date().toISOString()
+                        };
+                        
+                        database.ref('sekretariat').set(sekretariatData).then(() => {
+                            closeModal();
+                            loadSekretariatData();
+                            alert('✅ Data sekretariat berhasil disimpan!');
+                        }).catch(error => {
+                            console.error('Error saving sekretariat:', error);
+                            alert('❌ Gagal menyimpan data sekretariat: ' + error.message);
+                        });
+                    };
+                }
+            });
+        }
+        
+        // ==================== TAB FUNCTIONS ====================
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    const targetTab = document.getElementById(`${tab.dataset.tab}Tab`);
+                    if (targetTab) targetTab.classList.add('active');
+                });
+            });
+        }
+        
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hamburger menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger) {
+                hamburger.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                });
+            }
+            
+            // Close modal when clicking on X
+            const closeBtn = document.querySelector('.close');
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const modal = document.getElementById('modal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            }
+            
+            // Check authentication
+            checkAuth();
+        });
     </script>
-    
-    <script src="script.js"></script>
 </body>
 </html>
