@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karanga Taruna Kabupaten Cirebon - Beranda</title>
+    <title>Karang Taruna Kabupaten Cirebon - Beranda</title>
     <link rel="stylesheet" href="style.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -107,6 +107,10 @@
         .hero-content h1 span {
             color: #ffd700;
         }
+        .hero-content p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
         /* Section Titles */
         .section-title {
             text-align: center;
@@ -124,7 +128,8 @@
             transform: translateX(-50%);
             width: 80px;
             height: 3px;
-            background: #2a5298;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 3px;
         }
         /* Stats Section */
         .stats-section {
@@ -138,7 +143,7 @@
             margin-bottom: 3rem;
         }
         .stat-card {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
             border-radius: 15px;
             padding: 2rem;
             text-align: center;
@@ -158,6 +163,11 @@
             font-weight: bold;
             color: #1e3c72;
         }
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
         /* Structure Section */
         .structure-section {
             padding: 4rem 2rem;
@@ -174,10 +184,19 @@
             padding: 1.5rem;
             border-left: 4px solid #2a5298;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .structure-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
         .structure-card h3 {
             color: #1e3c72;
             margin-bottom: 1rem;
+        }
+        .structure-card p {
+            margin: 0.5rem 0;
+            color: #555;
         }
         /* Secretariat Preview */
         .secretariat-preview {
@@ -190,17 +209,26 @@
             gap: 2rem;
             margin-bottom: 2rem;
         }
+        .preview-photo {
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
         .preview-photo img {
             width: 100%;
             height: 300px;
             object-fit: cover;
-            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        .preview-photo img:hover {
+            transform: scale(1.05);
         }
         #previewMap {
             width: 100%;
             height: 300px;
             background: #e0e0e0;
-            border-radius: 10px;
+            border-radius: 12px;
+            overflow: hidden;
         }
         .text-center {
             text-align: center;
@@ -208,15 +236,18 @@
         }
         .btn-primary {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 12px 30px;
             text-decoration: none;
             border-radius: 50px;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .btn-primary:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
         /* Footer */
         footer {
@@ -224,12 +255,20 @@
             color: white;
             text-align: center;
             padding: 2rem;
+            margin-top: 0;
+        }
+        footer p {
+            margin: 5px 0;
         }
         /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
             color: #666;
+        }
+        /* Leaflet Map Styles */
+        .leaflet-container {
+            border-radius: 12px;
         }
         /* Responsive */
         @media (max-width: 768px) {
@@ -246,6 +285,7 @@
                 text-align: center;
                 transition: 0.3s;
                 padding: 2rem 0;
+                gap: 1rem;
             }
             .nav-menu.active {
                 left: 0;
@@ -258,6 +298,26 @@
             }
             .stats-grid {
                 grid-template-columns: 1fr;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .logo h2 {
+                font-size: 1rem;
+            }
+            .logo img {
+                height: 35px;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+            .stat-number {
+                font-size: 2rem;
+            }
+            .container {
+                padding: 0 15px;
             }
         }
     </style>
@@ -327,7 +387,7 @@
                 <h2 class="section-title">Sekretariat Kami</h2>
                 <div class="preview-content">
                     <div class="preview-photo">
-                        <img id="secretariatPhoto" src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png" alt="Foto Sekretariat">
+                        <img id="secretariatPhoto" src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png" alt="Foto Sekretariat Karang Taruna Kabupaten Cirebon">
                     </div>
                     <div class="preview-map">
                         <div id="previewMap">Memuat peta...</div>
@@ -365,11 +425,23 @@
             measurementId: "G-8JNPDJPRM1"
         };
         
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        
+        // Test database connection
+        const database = firebase.database();
+        database.ref('.info/connected').on('value', (snap) => {
+            if (snap.val() === true) {
+                console.log('✅ Terhubung ke Firebase Realtime Database');
+            } else {
+                console.log('❌ Gagal terhubung ke Firebase Realtime Database');
+            }
+        });
     </script>
     
-    <!-- Leaflet JS -->
+    <!-- Leaflet JS (OpenStreetMap - Gratis) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
