@@ -7,6 +7,104 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Additional styles for login page */
+        .login-section {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+        }
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header i {
+            font-size: 3.5rem;
+            color: #2a5298;
+        }
+        .login-header h2 {
+            margin: 1rem 0 0.5rem;
+            color: #1e3c72;
+        }
+        .login-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .login-message {
+            margin-top: 1rem;
+            text-align: center;
+            color: #e74c3c;
+            font-size: 0.9rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 1.5rem;
+            }
+            .login-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -37,7 +135,7 @@
                         <div class="login-header">
                             <i class="fas fa-user-lock"></i>
                             <h2>Login Admin</h2>
-                            <p>Masuk untuk mengelola data Karang Taruna</p>
+                            <p>Masuk untuk mengelola data Karang Taruna Kabupaten Cirebon</p>
                         </div>
                         <form id="loginForm">
                             <div class="input-group">
@@ -69,20 +167,41 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
-    <!-- Firebase Configuration -->
+    <!-- Firebase Configuration - HANYA SEKALI INITIALISASI -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
-            authDomain: "karang-taruna-dalam-data.firebaseapp.com",
-            databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "karang-taruna-dalam-data",
-            storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
-            messagingSenderId: "922028160917",
-            appId: "1:922028160917:web:8397305a92af28c0ca689c",
-            measurementId: "G-8JNPDJPRM1"
-        };
+        // Cek apakah Firebase sudah diinisialisasi
+        if (!firebase.apps.length) {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
+                authDomain: "karang-taruna-dalam-data.firebaseapp.com",
+                databaseURL: "https://karang-taruna-dalam-data-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "karang-taruna-dalam-data",
+                storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
+                messagingSenderId: "922028160917",
+                appId: "1:922028160917:web:8397305a92af28c0ca689c",
+                measurementId: "G-8JNPDJPRM1"
+            };
+            
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            console.log('✅ Firebase initialized on login.html');
+        } else {
+            console.log('✅ Firebase already initialized, using existing instance');
+        }
         
-        firebase.initializeApp(firebaseConfig);
+        // Test koneksi Auth (tanpa menyimpan ke variabel global)
+        const auth = firebase.auth();
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('✅ User already logged in:', user.email);
+                // Jika sudah login, redirect ke dashboard
+                if (window.location.pathname.includes('login.html')) {
+                    window.location.href = 'dashboard.html';
+                }
+            } else {
+                console.log('👤 No user logged in');
+            }
+        });
     </script>
     
     <script src="script.js"></script>
