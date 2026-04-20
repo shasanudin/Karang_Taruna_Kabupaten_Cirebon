@@ -431,7 +431,7 @@
                     <div id="fullMap">Memuat peta interaktif...</div>
                 </div>
 
-                <!-- ========= FITUR BARU: BERITA & KEGIATAN (CARD + SIDE SCROLL ANIMATION) ========= -->
+                <!-- ========= FITUR BERITA & KEGIATAN (CARD + SIDE SCROLL) ========= -->
                 <div class="news-section">
                     <div class="section-header">
                         <h3><i class="fas fa-newspaper"></i> Berita & Kegiatan Terkini</h3>
@@ -446,7 +446,7 @@
                     </div>
                 </div>
 
-                <!-- Galeri dokumentasi tambahan (statis / dinamis) -->
+                <!-- Galeri dokumentasi tambahan -->
                 <div class="additional-photos">
                     <h3><i class="fas fa-images"></i> Galeri Dokumentasi</h3>
                     <div class="photo-grid" id="activityPhotos">
@@ -487,7 +487,7 @@
         }
         const database = firebase.database();
 
-        // Data default
+        // Data default untuk sekretariat (hanya jika belum ada di database)
         const DEFAULT_SEKRETARIAT = {
             alamat: "Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon",
             telepon: "(0231) 321456",
@@ -499,53 +499,8 @@
                 "https://picsum.photos/id/20/400/300",
                 "https://picsum.photos/id/26/400/300",
                 "https://picsum.photos/id/29/400/300"
-            ],
-            berita_kegiatan: [] // akan diisi default jika kosong
+            ]
         };
-
-        // Data contoh berita/kegiatan (jika database kosong, kita tampilkan dengan animasi side scroll)
-        const DEFAULT_BERITA_KEGIATAN = [
-            {
-                id: "berita1",
-                judul: "Bakti Sosial Peduli Bencana",
-                tanggal: "10 April 2025",
-                deskripsi: "Karang Taruna Kabupaten Cirebon menggelar aksi kemanusiaan dan penggalangan dana untuk korban banjir di wilayah timur.",
-                gambar: "https://picsum.photos/id/100/400/250",
-                link: "#"
-            },
-            {
-                id: "berita2",
-                judul: "Pelatihan Kewirausahaan Pemuda",
-                tanggal: "25 Maret 2025",
-                deskripsi: "Kolaborasi dengan Disperindag membuka kelas bisnis digital dan UMKM bagi pemuda desa se-Kabupaten Cirebon.",
-                gambar: "https://picsum.photos/id/26/400/250",
-                link: "#"
-            },
-            {
-                id: "berita3",
-                judul: "Turnamen Voli Antar Desa",
-                tanggal: "5 April 2025",
-                deskripsi: "Semarak olahraga pemuda dalam rangka memperingati HUT Karang Taruna ke-45. Juara umum diraih Desa Palimanan.",
-                gambar: "https://picsum.photos/id/29/400/250",
-                link: "#"
-            },
-            {
-                id: "berita4",
-                judul: "Seminar Kepemimpinan Pemuda",
-                tanggal: "18 Maret 2025",
-                deskripsi: "Menghadirkan pembicara inspiratif untuk mencetak generasi pemimpin masa depan Cirebon.",
-                gambar: "https://picsum.photos/id/155/400/250",
-                link: "#"
-            },
-            {
-                id: "berita5",
-                judul: "Gotong Royong Bersihkan Aliran Sungai",
-                tanggal: "2 April 2025",
-                deskripsi: "Aksi peduli lingkungan bersama warga dan komunitas pecinta alam di wilayah Sumber.",
-                gambar: "https://picsum.photos/id/143/400/250",
-                link: "#"
-            }
-        ];
 
         // Helper: escape HTML
         function escapeHtml(str) {
@@ -555,8 +510,6 @@
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
 
@@ -582,12 +535,12 @@
             } catch(e) { console.warn(e); el.innerHTML = '<div style="padding:20px;">📍 Peta tidak tersedia</div>'; }
         }
 
-        // Render cards berita (horizontal scroll animation sudah otomatis oleh CSS & container)
+        // Render cards berita dari data Firebase
         function renderNewsCards(beritaList) {
             const wrapper = document.getElementById('newsCardsWrapper');
             if (!wrapper) return;
             if (!beritaList || beritaList.length === 0) {
-                wrapper.innerHTML = '<div class="empty-news"><i class="fas fa-calendar-alt"></i> Belum ada berita/kegiatan terbaru. Silakan cek lagi nanti.</div>';
+                wrapper.innerHTML = '<div class="empty-news"><i class="fas fa-calendar-alt"></i> Belum ada berita/kegiatan terbaru. Silakan tambahkan melalui halaman admin.</div>';
                 return;
             }
             let html = '';
@@ -596,9 +549,10 @@
                 const tanggal = escapeHtml(item.tanggal) || 'Terkini';
                 const desc = escapeHtml(item.deskripsi) || 'Kegiatan positif pemuda Kabupaten Cirebon.';
                 const imgSrc = item.gambar && item.gambar.trim() !== '' ? item.gambar : 'https://picsum.photos/id/13/400/250';
+                const linkUrl = item.link && item.link !== '#' ? item.link : 'javascript:void(0);';
                 html += `
-                    <div class="activity-card" onclick="window.open('${item.link && item.link !== '#' ? item.link : 'javascript:void(0);'}', '_blank')" style="cursor: pointer;">
-                        <img class="card-img" src="${imgSrc}" alt="${judul}" loading="lazy">
+                    <div class="activity-card" onclick="window.open('${linkUrl}', '_blank')" style="cursor: pointer;">
+                        <img class="card-img" src="${imgSrc}" alt="${judul}" loading="lazy" onerror="this.src='https://picsum.photos/id/13/400/250'">
                         <div class="card-content">
                             <div class="card-title">
                                 <i class="fas fa-calendar-check"></i> ${judul}
@@ -614,22 +568,22 @@
                 `;
             }
             wrapper.innerHTML = html;
-            // animasi muncul bertahap sudah dihandle CSS animation delay bisa ditambahkan
             const cards = document.querySelectorAll('.activity-card');
             cards.forEach((card, idx) => {
                 card.style.animationDelay = `${idx * 0.07}s`;
             });
         }
 
-        // Load semua data sekretariat, termasuk berita kegiatan (array) dan galeri foto
+        // Load semua data: sekretariat + berita_kegiatan
         function loadFullSecretariatData() {
+            // Load data sekretariat
             database.ref('sekretariat').once('value').then(snapshot => {
                 let data = snapshot.val();
                 if (!data) {
-                    console.log("Data kosong, gunakan default tanpa menyimpan ke database");
+                    console.log("Data sekretariat kosong, gunakan default tanpa menyimpan ke database");
                     data = JSON.parse(JSON.stringify(DEFAULT_SEKRETARIAT));
                 }
-                // Update foto utama
+                // Update foto utama dan info kontak
                 const mainPhoto = document.getElementById('mainPhoto');
                 if (mainPhoto) mainPhoto.src = data.foto || DEFAULT_SEKRETARIAT.foto;
                 document.getElementById('address').innerText = data.alamat || DEFAULT_SEKRETARIAT.alamat;
@@ -640,7 +594,7 @@
                 const lng = data.longitude || DEFAULT_SEKRETARIAT.longitude;
                 setTimeout(() => initLeafletMap('fullMap', lat, lng, 15), 100);
                 
-                // Galeri foto kegiatan (static grid)
+                // Galeri foto kegiatan
                 let galeriFoto = data.foto_kegiatan || DEFAULT_SEKRETARIAT.foto_kegiatan;
                 const photoGrid = document.getElementById('activityPhotos');
                 if (photoGrid) {
@@ -659,24 +613,10 @@
                         photoGrid.innerHTML = '<div class="loading">📸 Belum ada foto dokumentasi, segera unggah momen kebersamaan.</div>';
                     }
                 }
-                
-                // Ambil data berita & kegiatan: prioritas dari node 'berita_kegiatan' di database, jika tidak ada gunakan default
-                let beritaKegiatan = null;
-                if (data.berita_kegiatan && Array.isArray(data.berita_kegiatan) && data.berita_kegiatan.length > 0) {
-                    beritaKegiatan = data.berita_kegiatan;
-                } else if (data.berita && Array.isArray(data.berita)) { // fallback kemungkinan nama node lain
-                    beritaKegiatan = data.berita;
-                } else {
-                    // tidak ada di database, gunakan data contoh default (tapi jangan overwrite database, hanya tampilan)
-                    beritaKegiatan = DEFAULT_BERITA_KEGIATAN;
-                }
-                renderNewsCards(beritaKegiatan);
             }).catch(error => {
-                console.error("Error load data:", error);
-                // Fallback full: tampilkan default
-                const defaultLat = DEFAULT_SEKRETARIAT.latitude;
-                const defaultLng = DEFAULT_SEKRETARIAT.longitude;
-                setTimeout(() => initLeafletMap('fullMap', defaultLat, defaultLng, 15), 100);
+                console.error("Error load sekretariat:", error);
+                // Fallback tampilkan default jika gagal load sekretariat
+                setTimeout(() => initLeafletMap('fullMap', DEFAULT_SEKRETARIAT.latitude, DEFAULT_SEKRETARIAT.longitude, 15), 100);
                 document.getElementById('address').innerText = DEFAULT_SEKRETARIAT.alamat;
                 document.getElementById('phone').innerText = DEFAULT_SEKRETARIAT.telepon;
                 document.getElementById('email').innerText = DEFAULT_SEKRETARIAT.email;
@@ -690,14 +630,50 @@
                         img.onclick = () => window.open(f, '_blank');
                         photoGrid.appendChild(img);
                     });
-                } else if(photoGrid) {
-                    photoGrid.innerHTML = '<div class="loading">⚠️ Gagal memuat galeri, gunakan data contoh.</div>';
                 }
-                renderNewsCards(DEFAULT_BERITA_KEGIATAN);
+            });
+
+            // ========== PERBAIKAN UTAMA: AMBIL BERITA KEGIATAN LANGSUNG DARI NODE 'berita_kegiatan' ==========
+            console.log("Mengambil data berita/kegiatan dari node 'berita_kegiatan'...");
+            database.ref('berita_kegiatan').once('value').then(snapshot => {
+                const beritaData = snapshot.val();
+                let beritaList = [];
+                
+                if (beritaData) {
+                    // Konversi object menjadi array
+                    const keys = Object.keys(beritaData);
+                    beritaList = keys.map(key => {
+                        return {
+                            id: key,
+                            ...beritaData[key]
+                        };
+                    });
+                    // Urutkan berdasarkan tanggal terbaru (jika ada properti tanggal)
+                    beritaList.sort((a, b) => {
+                        if (a.tanggal && b.tanggal) {
+                            return new Date(b.tanggal) - new Date(a.tanggal);
+                        }
+                        return 0;
+                    });
+                    console.log(`✅ Berhasil mengambil ${beritaList.length} data berita/kegiatan dari database.`);
+                } else {
+                    console.log("ℹ️ Node 'berita_kegiatan' kosong atau tidak ditemukan di database.");
+                }
+                
+                // Tampilkan berita (jika kosong, tampilkan pesan empty state)
+                renderNewsCards(beritaList);
+                
+            }).catch(error => {
+                console.error("❌ Gagal mengambil data berita_kegiatan:", error);
+                // Tampilkan pesan error pada widget berita
+                const wrapper = document.getElementById('newsCardsWrapper');
+                if (wrapper) {
+                    wrapper.innerHTML = '<div class="empty-news"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data berita. Periksa koneksi atau database.</div>';
+                }
             });
         }
 
-        // Drag to scroll interaksi untuk horizontal scroll (opsional)
+        // Drag to scroll interaksi untuk horizontal scroll
         function enableHorizontalDragScroll() {
             const container = document.getElementById('scrollContainer');
             if (!container) return;
