@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Reset & Base */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +24,6 @@
             padding: 0 20px;
         }
         
-        /* Navbar */
         .navbar {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             position: fixed;
@@ -89,7 +87,6 @@
             transition: 0.3s;
         }
         
-        /* Dashboard Header */
         .dashboard-header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
@@ -106,7 +103,6 @@
             opacity: 0.95;
         }
         
-        /* Stats Cards */
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -140,7 +136,6 @@
             font-size: 0.85rem;
         }
         
-        /* Dashboard Tabs */
         .dashboard-tabs {
             display: flex;
             gap: 0.5rem;
@@ -178,7 +173,6 @@
             display: block;
         }
         
-        /* Admin Actions */
         .admin-actions {
             margin-bottom: 1.5rem;
             display: flex;
@@ -211,17 +205,10 @@
         .btn-upload {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
         }
-        .btn-upload:hover {
-            box-shadow: 0 5px 15px rgba(52,152,219,0.3);
-        }
         .btn-danger {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
-        .btn-danger:hover {
-            box-shadow: 0 5px 15px rgba(231,76,60,0.3);
-        }
         
-        /* Admin List */
         .admin-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -281,7 +268,6 @@
             transform: scale(1.05);
         }
         
-        /* Sekretariat Admin */
         .sekretariat-admin {
             background: white;
             border-radius: 12px;
@@ -289,7 +275,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
-        /* Gallery Grid */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -342,10 +327,10 @@
             background: #3498db;
         }
         
-        /* News Cards Styling (untuk preview di admin) */
+        /* News Cards Styling untuk admin */
         .news-preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-top: 1rem;
         }
@@ -362,7 +347,7 @@
         }
         .news-preview-img {
             width: 100%;
-            height: 160px;
+            height: 180px;
             object-fit: cover;
         }
         .news-preview-content {
@@ -375,46 +360,55 @@
             margin-bottom: 0.5rem;
         }
         .news-preview-date {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #999;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         .news-preview-desc {
             font-size: 0.85rem;
             color: #555;
             line-height: 1.4;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
         .news-actions {
             display: flex;
             gap: 0.5rem;
-            padding: 0.5rem 1rem 1rem;
+            padding: 0.75rem 1rem 1rem;
             border-top: 1px solid #eee;
-            margin-top: 0.5rem;
         }
         .news-actions button {
             flex: 1;
-            padding: 6px;
+            padding: 8px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 500;
+            font-size: 0.8rem;
+            font-weight: 600;
             transition: all 0.2s;
         }
         .news-edit {
             background: #3498db;
             color: white;
         }
+        .news-edit:hover {
+            background: #2980b9;
+            transform: scale(1.02);
+        }
         .news-delete {
             background: #e74c3c;
             color: white;
         }
+        .news-delete:hover {
+            background: #c0392b;
+            transform: scale(1.02);
+        }
         
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -424,14 +418,15 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
+            overflow-y: auto;
         }
         .modal-content {
             background-color: white;
             margin: 5% auto;
             padding: 2rem;
             width: 90%;
-            max-width: 550px;
-            border-radius: 15px;
+            max-width: 600px;
+            border-radius: 20px;
             position: relative;
             animation: slideDown 0.3s ease;
         }
@@ -487,7 +482,7 @@
         }
         .input-group textarea {
             padding-left: 1rem;
-            min-height: 80px;
+            min-height: 120px;
             resize: vertical;
         }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
@@ -512,7 +507,6 @@
             box-shadow: 0 5px 15px rgba(39,174,96,0.3);
         }
         
-        /* Status */
         .status-active {
             color: #27ae60;
             font-weight: 600;
@@ -522,7 +516,6 @@
             font-weight: 600;
         }
         
-        /* Loading & Empty */
         .loading {
             text-align: center;
             padding: 40px;
@@ -541,7 +534,6 @@
             color: #ccc;
         }
         
-        /* Footer */
         footer {
             background: #1e3c72;
             color: white;
@@ -549,15 +541,9 @@
             padding: 2rem;
             margin-top: 2rem;
         }
-        footer p {
-            margin: 5px 0;
-        }
         
-        /* Responsive */
         @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
+            .hamburger { display: flex; }
             .nav-menu {
                 position: fixed;
                 left: -100%;
@@ -570,21 +556,12 @@
                 padding: 2rem 0;
                 gap: 1rem;
             }
-            .nav-menu.active {
-                left: 0;
-            }
-            .dashboard-tabs {
-                justify-content: center;
-            }
-            .admin-list {
-                grid-template-columns: 1fr;
-            }
-            .dashboard-header h1 {
-                font-size: 1.8rem;
-            }
-            .stats-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .nav-menu.active { left: 0; }
+            .dashboard-tabs { justify-content: center; }
+            .admin-list { grid-template-columns: 1fr; }
+            .dashboard-header h1 { font-size: 1.8rem; }
+            .stats-cards { grid-template-columns: repeat(2, 1fr); }
+            .news-preview-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -619,7 +596,6 @@
 
         <section class="dashboard-section">
             <div class="container">
-                <!-- Stats Cards -->
                 <div class="stats-cards" id="statsCards">
                     <div class="stat-card">
                         <i class="fas fa-building"></i>
@@ -648,7 +624,6 @@
                     </div>
                 </div>
 
-                <!-- Tabs -->
                 <div class="dashboard-tabs">
                     <button class="tab-btn active" data-tab="kecamatan">📊 Kecamatan</button>
                     <button class="tab-btn" data-tab="desa">🏘️ Desa</button>
@@ -658,7 +633,6 @@
                     <button class="tab-btn" data-tab="dokumentasi">📸 Dokumentasi</button>
                 </div>
 
-                <!-- Kecamatan Tab -->
                 <div id="kecamatanTab" class="tab-content active">
                     <div class="admin-actions">
                         <button class="btn-add" onclick="showAddForm('kecamatan')">
@@ -668,7 +642,6 @@
                     <div id="kecamatanList" class="admin-list"><div class="loading">Memuat data...</div></div>
                 </div>
 
-                <!-- Desa Tab -->
                 <div id="desaTab" class="tab-content">
                     <div class="admin-actions">
                         <button class="btn-add" onclick="showAddForm('desa')">
@@ -678,7 +651,6 @@
                     <div id="desaList" class="admin-list"><div class="loading">Memuat data...</div></div>
                 </div>
 
-                <!-- Struktur Tab -->
                 <div id="strukturTab" class="tab-content">
                     <div class="admin-actions">
                         <button class="btn-add" onclick="showAddForm('struktur')">
@@ -688,7 +660,6 @@
                     <div id="strukturList" class="admin-list"><div class="loading">Memuat data...</div></div>
                 </div>
 
-                <!-- Sekretariat Tab -->
                 <div id="sekretariatTab" class="tab-content">
                     <div class="admin-actions">
                         <button class="btn-edit" onclick="editSekretariat()">
@@ -698,7 +669,6 @@
                     <div id="sekretariatInfo" class="sekretariat-admin"><div class="loading">Memuat data...</div></div>
                 </div>
 
-                <!-- BERITA & KEGIATAN Tab (FITUR BARU) -->
                 <div id="beritaTab" class="tab-content">
                     <div class="admin-actions">
                         <button class="btn-add" onclick="showBeritaForm()">
@@ -708,7 +678,6 @@
                     <div id="beritaList" class="news-preview-grid"><div class="loading">Memuat berita...</div></div>
                 </div>
 
-                <!-- Dokumentasi Tab -->
                 <div id="dokumentasiTab" class="tab-content">
                     <div class="admin-actions">
                         <button class="btn-upload" onclick="showAddDokumentasiForm()">
@@ -721,7 +690,6 @@
         </section>
     </main>
 
-    <!-- Modal Form Umum -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -733,7 +701,6 @@
         </div>
     </div>
 
-    <!-- Preview Image Modal -->
     <div id="previewModal" class="modal">
         <div class="modal-content modal-large">
             <span class="close" onclick="closePreviewModal()">&times;</span>
@@ -753,13 +720,11 @@
         </div>
     </footer>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
     <script>
-        // ==================== FIREBASE CONFIGURATION ====================
         const firebaseConfig = {
             apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
             authDomain: "karang-taruna-dalam-data.firebaseapp.com",
@@ -774,15 +739,13 @@
         const database = firebase.database();
         const auth = firebase.auth();
         
-        // Global variables
         let currentUser = null;
         let currentEditId = null;
         let currentEditType = null;
         let currentPreviewPhotoUrl = null;
         let currentPreviewIndex = null;
-        let currentBeritaId = null; // Untuk edit berita
+        let currentBeritaId = null;
         
-        // Helper functions
         function escapeHtml(str) {
             if (!str) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -804,7 +767,6 @@
             document.getElementById('previewModal').style.display = 'none';
         }
         
-        // Update all stats including berita
         function updateStats() {
             database.ref('kecamatan').once('value', snap => document.getElementById('statKecamatan').textContent = snap.numChildren());
             database.ref('desa').once('value', snap => document.getElementById('statDesa').textContent = snap.numChildren());
@@ -816,7 +778,6 @@
             });
         }
         
-        // Authentication
         function checkAuth() {
             auth.onAuthStateChanged(user => {
                 if (!user) window.location.href = 'login.html';
@@ -831,81 +792,156 @@
             });
         }
         
-        // Dashboard load functions (existing + berita)
         function loadDashboard() {
             updateStats();
             loadKecamatanData();
             loadDesaData();
             loadStrukturData();
             loadSekretariatData();
-            loadBeritaData();     // NEW
+            loadBeritaData();
             loadDokumentasiData();
             setupTabs();
             setupLogout();
         }
         
-        // Berita & Kegiatan CRUD
+        // ==================== BERITA & KEGIATAN CRUD (DIPERBAIKI) ====================
         function loadBeritaData() {
             const container = document.getElementById('beritaList');
             if (!container) return;
-            database.ref('berita_kegiatan').orderByChild('tanggal').once('value', (snapshot) => {
+            
+            database.ref('berita_kegiatan').once('value', (snapshot) => {
                 container.innerHTML = '';
+                
                 if (snapshot.numChildren() === 0) {
                     container.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>Belum ada berita atau kegiatan. Klik "Tambah Berita/Kegiatan"</p></div>';
                     return;
                 }
+                
                 const items = [];
-                snapshot.forEach(child => items.push({ id: child.key, ...child.val() }));
-                items.reverse(); // Tampilkan terbaru dulu
+                snapshot.forEach(child => {
+                    items.push({ 
+                        id: child.key, 
+                        ...child.val() 
+                    });
+                });
+                
+                // Urutkan berdasarkan tanggal terbaru
+                items.sort((a, b) => {
+                    if (a.tanggal && b.tanggal) {
+                        return new Date(b.tanggal) - new Date(a.tanggal);
+                    }
+                    return 0;
+                });
+                
                 items.forEach(item => {
+                    const previewDesc = item.deskripsi ? (item.deskripsi.length > 100 ? item.deskripsi.substring(0, 100) + '...' : item.deskripsi) : 'Tidak ada deskripsi';
+                    
                     container.innerHTML += `
                         <div class="news-preview-card">
-                            <img class="news-preview-img" src="${escapeHtml(item.gambar || 'https://picsum.photos/id/13/400/200')}" alt="${escapeHtml(item.judul)}" onerror="this.src='https://picsum.photos/id/13/400/200'">
+                            <img class="news-preview-img" src="${escapeHtml(item.gambar || 'https://picsum.photos/id/13/400/200')}" 
+                                 alt="${escapeHtml(item.judul)}" 
+                                 onerror="this.src='https://picsum.photos/id/13/400/200'">
                             <div class="news-preview-content">
-                                <div class="news-preview-title">${escapeHtml(item.judul)}</div>
-                                <div class="news-preview-date"><i class="far fa-calendar-alt"></i> ${escapeHtml(item.tanggal)}</div>
-                                <div class="news-preview-desc">${escapeHtml(item.deskripsi || '')}</div>
+                                <div class="news-preview-title">${escapeHtml(item.judul || 'Tanpa Judul')}</div>
+                                <div class="news-preview-date">
+                                    <i class="far fa-calendar-alt"></i> ${escapeHtml(item.tanggal || 'Tanggal tidak tersedia')}
+                                </div>
+                                <div class="news-preview-desc">${escapeHtml(previewDesc)}</div>
                             </div>
                             <div class="news-actions">
-                                <button class="news-edit" onclick="editBerita('${item.id}')"><i class="fas fa-edit"></i> Edit</button>
-                                <button class="news-delete" onclick="deleteBerita('${item.id}')"><i class="fas fa-trash"></i> Hapus</button>
+                                <button class="news-edit" onclick="editBerita('${item.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="news-delete" onclick="deleteBerita('${item.id}')">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
                             </div>
-                        </div>`;
+                        </div>
+                    `;
                 });
-            }).catch(() => container.innerHTML = '<div class="loading">❌ Gagal memuat berita</div>');
+            }).catch(error => {
+                console.error("Error loading berita:", error);
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Gagal memuat data berita</p></div>';
+            });
         }
         
         function showBeritaForm(editMode = false) {
             const modal = document.getElementById('modal');
             const modalTitle = document.getElementById('modalTitle');
             const formFields = document.getElementById('formFields');
+            
             modalTitle.textContent = editMode ? 'Edit Berita/Kegiatan' : 'Tambah Berita/Kegiatan Baru';
+            
             formFields.innerHTML = `
-                <div class="input-group"><i class="fas fa-heading"></i><input type="text" id="judul" placeholder="Judul Berita/Kegiatan" required></div>
-                <div class="input-group"><i class="fas fa-calendar"></i><input type="date" id="tanggal" value="${new Date().toISOString().split('T')[0]}" required></div>
-                <div class="input-group"><i class="fas fa-image"></i><input type="text" id="gambar" placeholder="URL Gambar (opsional, gunakan placeholder jika kosong)"></div>
-                <div class="input-group"><i class="fas fa-align-left"></i><textarea id="deskripsi" placeholder="Deskripsi lengkap kegiatan/berita..." rows="4" required></textarea></div>
-                <div class="input-group"><i class="fas fa-link"></i><input type="url" id="link" placeholder="Link terkait (opsional)"></div>
-                <small style="color:#666;">* URL gambar bisa dari hosting gratis (Imgur, Postimages, atau placeholder akan otomatis)</small>
+                <div class="input-group">
+                    <i class="fas fa-heading"></i>
+                    <input type="text" id="judul" placeholder="Judul Berita/Kegiatan" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-calendar"></i>
+                    <input type="date" id="tanggal" value="${new Date().toISOString().split('T')[0]}" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-image"></i>
+                    <input type="text" id="gambar" placeholder="URL Gambar (contoh: https://example.com/foto.jpg)">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-align-left"></i>
+                    <textarea id="deskripsi" placeholder="Deskripsi lengkap kegiatan/berita..." rows="5" required></textarea>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-link"></i>
+                    <input type="url" id="link" placeholder="Link terkait (opsional)">
+                </div>
+                <small style="color:#666; display:block; margin-top:-5px;">* URL gambar bisa menggunakan hosting gratis (Imgur, Postimages, atau placeholder otomatis jika kosong)</small>
             `;
+            
             modal.style.display = 'block';
+            
             document.getElementById('dataForm').onsubmit = (e) => {
                 e.preventDefault();
+                
                 const judul = document.getElementById('judul')?.value.trim();
                 const tanggal = document.getElementById('tanggal')?.value;
-                const gambar = document.getElementById('gambar')?.value.trim() || 'https://picsum.photos/id/20/400/250';
+                const gambar = document.getElementById('gambar')?.value.trim();
                 const deskripsi = document.getElementById('deskripsi')?.value.trim();
-                const link = document.getElementById('link')?.value.trim() || '#';
-                if (!judul || !tanggal || !deskripsi) return alert('Judul, tanggal, dan deskripsi wajib diisi!');
-                const beritaData = { judul, tanggal, gambar, deskripsi, link, updatedAt: new Date().toISOString() };
+                const link = document.getElementById('link')?.value.trim();
+                
+                if (!judul || !tanggal || !deskripsi) {
+                    alert('Judul, tanggal, dan deskripsi wajib diisi!');
+                    return;
+                }
+                
+                const beritaData = { 
+                    judul, 
+                    tanggal, 
+                    gambar: gambar || 'https://picsum.photos/id/20/400/250',
+                    deskripsi, 
+                    link: link || '#',
+                    updatedAt: new Date().toISOString()
+                };
+                
                 if (currentBeritaId) {
-                    database.ref(`berita_kegiatan/${currentBeritaId}`).update(beritaData).then(() => {
-                        closeModal(); loadBeritaData(); updateStats(); alert('✅ Berita berhasil diupdate!');
-                    }).catch(err => alert('Gagal update: ' + err.message));
+                    // Update existing
+                    database.ref(`berita_kegiatan/${currentBeritaId}`).update(beritaData)
+                        .then(() => {
+                            closeModal(); 
+                            loadBeritaData(); 
+                            updateStats(); 
+                            alert('✅ Berita berhasil diupdate!');
+                            currentBeritaId = null;
+                        })
+                        .catch(err => alert('Gagal update: ' + err.message));
                 } else {
-                    database.ref('berita_kegiatan').push(beritaData).then(() => {
-                        closeModal(); loadBeritaData(); updateStats(); alert('✅ Berita berhasil ditambahkan!');
-                    }).catch(err => alert('Gagal simpan: ' + err.message));
+                    // Create new
+                    database.ref('berita_kegiatan').push(beritaData)
+                        .then(() => {
+                            closeModal(); 
+                            loadBeritaData(); 
+                            updateStats(); 
+                            alert('✅ Berita berhasil ditambahkan!');
+                        })
+                        .catch(err => alert('Gagal simpan: ' + err.message));
                 }
             };
         }
@@ -922,25 +958,32 @@
                         if (document.getElementById('gambar')) document.getElementById('gambar').value = data.gambar || '';
                         if (document.getElementById('deskripsi')) document.getElementById('deskripsi').value = data.deskripsi || '';
                         if (document.getElementById('link')) document.getElementById('link').value = data.link || '';
-                    }, 50);
+                    }, 100);
                 }
-            });
+            }).catch(err => alert('Gagal mengambil data: ' + err.message));
         }
         
         function deleteBerita(id) {
-            if (confirm('⚠️ Hapus berita/kegiatan ini secara permanen?')) {
-                database.ref(`berita_kegiatan/${id}`).remove().then(() => {
-                    loadBeritaData(); updateStats(); alert('✅ Berita dihapus!');
-                }).catch(err => alert('Gagal hapus: ' + err.message));
+            if (confirm('⚠️ Apakah Anda yakin ingin menghapus berita/kegiatan ini secara permanen?')) {
+                database.ref(`berita_kegiatan/${id}`).remove()
+                    .then(() => {
+                        loadBeritaData(); 
+                        updateStats(); 
+                        alert('✅ Berita berhasil dihapus!');
+                    })
+                    .catch(err => alert('Gagal hapus: ' + err.message));
             }
         }
         
-        // Existing functions (kecamatan, desa, struktur, sekretariat, dokumentasi)
+        // ==================== FUNGSI LAINNYA (KECAMATAN, DESA, DLL) ====================
         function loadKecamatanData() {
             const container = document.getElementById('kecamatanList');
             database.ref('kecamatan').once('value', snap => {
                 container.innerHTML = '';
-                if (snap.numChildren() === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-building"></i><p>Belum ada data kecamatan</p></div>'; return; }
+                if (snap.numChildren() === 0) { 
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-building"></i><p>Belum ada data kecamatan</p></div>'; 
+                    return; 
+                }
                 snap.forEach(child => {
                     const data = child.val();
                     container.innerHTML += `<div class="admin-item"><div><strong>🏢 ${escapeHtml(data.nama)}</strong><p>👤 Ketua: ${escapeHtml(data.ketua || '-')}</p><p>📊 Status: <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p></div><div class="admin-item-actions"><button class="btn-edit-item" onclick="editItem('kecamatan','${child.key}')"><i class="fas fa-edit"></i></button><button class="btn-delete-item" onclick="deleteItem('kecamatan','${child.key}')"><i class="fas fa-trash"></i></button></div></div>`;
@@ -952,7 +995,10 @@
             const container = document.getElementById('desaList');
             database.ref('desa').once('value', snap => {
                 container.innerHTML = '';
-                if (snap.numChildren() === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada data desa</p></div>'; return; }
+                if (snap.numChildren() === 0) { 
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-home"></i><p>Belum ada data desa</p></div>'; 
+                    return; 
+                }
                 snap.forEach(child => {
                     const data = child.val();
                     container.innerHTML += `<div class="admin-item"><div><strong>🏘️ ${escapeHtml(data.nama)}</strong><p>📍 Kecamatan: ${escapeHtml(data.kecamatan)}</p><p>👤 Ketua: ${escapeHtml(data.ketua || '-')}</p><p>📊 Status: <span class="${data.status === 'Aktif' ? 'status-active' : 'status-inactive'}">${escapeHtml(data.status || 'Aktif')}</span></p></div><div class="admin-item-actions"><button class="btn-edit-item" onclick="editItem('desa','${child.key}')"><i class="fas fa-edit"></i></button><button class="btn-delete-item" onclick="deleteItem('desa','${child.key}')"><i class="fas fa-trash"></i></button></div></div>`;
@@ -964,7 +1010,10 @@
             const container = document.getElementById('strukturList');
             database.ref('struktur').orderByChild('urutan').once('value', snap => {
                 container.innerHTML = '';
-                if (snap.numChildren() === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data struktur</p></div>'; return; }
+                if (snap.numChildren() === 0) { 
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Belum ada data struktur</p></div>'; 
+                    return; 
+                }
                 snap.forEach(child => {
                     const data = child.val();
                     container.innerHTML += `<div class="admin-item"><div><strong>📌 ${escapeHtml(data.jabatan)}</strong><p>👤 Nama: ${escapeHtml(data.nama)}</p><p>📍 Alamat: ${escapeHtml(data.alamat || '-')}</p></div><div class="admin-item-actions"><button class="btn-edit-item" onclick="editItem('struktur','${child.key}')"><i class="fas fa-edit"></i></button><button class="btn-delete-item" onclick="deleteItem('struktur','${child.key}')"><i class="fas fa-trash"></i></button></div></div>`;
@@ -976,8 +1025,16 @@
             const container = document.getElementById('sekretariatInfo');
             database.ref('sekretariat').once('value', snap => {
                 const data = snap.val();
-                if (data) container.innerHTML = `<div class="admin-item"><div><p><strong>📍 Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p><p><strong>📞 Telepon:</strong> ${escapeHtml(data.telepon || '-')}</p><p><strong>📧 Email:</strong> ${escapeHtml(data.email || '-')}</p><p><strong>🌐 Koordinat:</strong> ${data.latitude || '-'}, ${data.longitude || '-'}</p></div></div>`;
-                else container.innerHTML = '<div class="empty-state"><i class="fas fa-map-marker-alt"></i><p>Belum ada data sekretariat</p></div>';
+                if (data) {
+                    container.innerHTML = `<div class="admin-item"><div>
+                        <p><strong>📍 Alamat:</strong> ${escapeHtml(data.alamat || '-')}</p>
+                        <p><strong>📞 Telepon:</strong> ${escapeHtml(data.telepon || '-')}</p>
+                        <p><strong>📧 Email:</strong> ${escapeHtml(data.email || '-')}</p>
+                        <p><strong>🌐 Koordinat:</strong> ${data.latitude || '-'}, ${data.longitude || '-'}</p>
+                    </div></div>`;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-map-marker-alt"></i><p>Belum ada data sekretariat</p></div>';
+                }
             });
         }
         
@@ -986,38 +1043,78 @@
             database.ref('sekretariat').once('value', snap => {
                 const photos = snap.val()?.foto_kegiatan || [];
                 container.innerHTML = '';
-                if (photos.length === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>Belum ada foto dokumentasi</p></div>'; return; }
+                if (photos.length === 0) { 
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-images"></i><p>Belum ada foto dokumentasi</p></div>'; 
+                    return; 
+                }
                 photos.forEach((photo, idx) => {
-                    if (photo) container.innerHTML += `<div class="gallery-item"><img src="${escapeHtml(photo)}" onclick="previewPhoto('${escapeHtml(photo)}',${idx})"><div class="gallery-actions"><button class="btn-view" onclick="previewPhoto('${escapeHtml(photo)}',${idx})"><i class="fas fa-eye"></i></button><button onclick="deletePhoto(${idx})"><i class="fas fa-trash"></i></button></div></div>`;
+                    if (photo) {
+                        container.innerHTML += `<div class="gallery-item">
+                            <img src="${escapeHtml(photo)}" onclick="previewPhoto('${escapeHtml(photo)}',${idx})">
+                            <div class="gallery-actions">
+                                <button class="btn-view" onclick="previewPhoto('${escapeHtml(photo)}',${idx})"><i class="fas fa-eye"></i></button>
+                                <button onclick="deletePhoto(${idx})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>`;
+                    }
                 });
             });
         }
         
-        // CRUD item for kec, desa, struktur
         function showAddForm(type) {
-            currentEditType = type; currentEditId = null;
-            const modal = document.getElementById('modal'), title = document.getElementById('modalTitle'), fieldsDiv = document.getElementById('formFields');
+            currentEditType = type; 
+            currentEditId = null;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const fieldsDiv = document.getElementById('formFields');
             title.textContent = `Tambah ${getTypeName(type)}`;
             let fields = '';
-            if (type === 'kecamatan') fields = `<div class="input-group"><i class="fas fa-building"></i><input id="nama" placeholder="Nama Kecamatan" required></div><div class="input-group"><i class="fas fa-user"></i><input id="ketua" placeholder="Ketua"></div><div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option value="Aktif">Aktif</option><option value="Tidak Aktif">Tidak Aktif</option></select></div>`;
-            else if (type === 'desa') fields = `<div class="input-group"><i class="fas fa-home"></i><input id="nama" placeholder="Nama Desa" required></div><div class="input-group"><i class="fas fa-building"></i><input id="kecamatan" placeholder="Kecamatan" required></div><div class="input-group"><i class="fas fa-user"></i><input id="ketua" placeholder="Ketua"></div><div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option value="Aktif">Aktif</option><option value="Tidak Aktif">Tidak Aktif</option></select></div>`;
-            else if (type === 'struktur') fields = `<div class="input-group"><i class="fas fa-tag"></i><input id="jabatan" placeholder="Jabatan" required></div><div class="input-group"><i class="fas fa-user"></i><input id="nama" placeholder="Nama" required></div><div class="input-group"><i class="fas fa-map-marker-alt"></i><input id="alamat" placeholder="Alamat"></div><div class="input-group"><i class="fas fa-sort-numeric-down"></i><input type="number" id="urutan" placeholder="Urutan"></div>`;
+            if (type === 'kecamatan') {
+                fields = `<div class="input-group"><i class="fas fa-building"></i><input id="nama" placeholder="Nama Kecamatan" required></div>
+                         <div class="input-group"><i class="fas fa-user"></i><input id="ketua" placeholder="Ketua"></div>
+                         <div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option value="Aktif">Aktif</option><option value="Tidak Aktif">Tidak Aktif</option></select></div>`;
+            } else if (type === 'desa') {
+                fields = `<div class="input-group"><i class="fas fa-home"></i><input id="nama" placeholder="Nama Desa" required></div>
+                         <div class="input-group"><i class="fas fa-building"></i><input id="kecamatan" placeholder="Kecamatan" required></div>
+                         <div class="input-group"><i class="fas fa-user"></i><input id="ketua" placeholder="Ketua"></div>
+                         <div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option value="Aktif">Aktif</option><option value="Tidak Aktif">Tidak Aktif</option></select></div>`;
+            } else if (type === 'struktur') {
+                fields = `<div class="input-group"><i class="fas fa-tag"></i><input id="jabatan" placeholder="Jabatan" required></div>
+                         <div class="input-group"><i class="fas fa-user"></i><input id="nama" placeholder="Nama" required></div>
+                         <div class="input-group"><i class="fas fa-map-marker-alt"></i><input id="alamat" placeholder="Alamat"></div>
+                         <div class="input-group"><i class="fas fa-sort-numeric-down"></i><input type="number" id="urutan" placeholder="Urutan"></div>`;
+            }
             fieldsDiv.innerHTML = fields;
             modal.style.display = 'block';
             document.getElementById('dataForm').onsubmit = (e) => { e.preventDefault(); saveData(type); };
         }
         
         function editItem(type, id) {
-            currentEditType = type; currentEditId = id;
-            const modal = document.getElementById('modal'), title = document.getElementById('modalTitle'), fieldsDiv = document.getElementById('formFields');
+            currentEditType = type; 
+            currentEditId = id;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const fieldsDiv = document.getElementById('formFields');
             title.textContent = `Edit ${getTypeName(type)}`;
             database.ref(`${type}/${id}`).once('value', snap => {
                 const data = snap.val();
                 if (!data) return;
                 let fields = '';
-                if (type === 'kecamatan') fields = `<div class="input-group"><i class="fas fa-building"></i><input id="nama" value="${escapeHtml(data.nama)}" required></div><div class="input-group"><i class="fas fa-user"></i><input id="ketua" value="${escapeHtml(data.ketua || '')}"></div><div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option><option ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option></select></div>`;
-                else if (type === 'desa') fields = `<div class="input-group"><i class="fas fa-home"></i><input id="nama" value="${escapeHtml(data.nama)}" required></div><div class="input-group"><i class="fas fa-building"></i><input id="kecamatan" value="${escapeHtml(data.kecamatan)}" required></div><div class="input-group"><i class="fas fa-user"></i><input id="ketua" value="${escapeHtml(data.ketua || '')}"></div><div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option><option ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option></select></div>`;
-                else if (type === 'struktur') fields = `<div class="input-group"><i class="fas fa-tag"></i><input id="jabatan" value="${escapeHtml(data.jabatan)}" required></div><div class="input-group"><i class="fas fa-user"></i><input id="nama" value="${escapeHtml(data.nama)}" required></div><div class="input-group"><i class="fas fa-map-marker-alt"></i><input id="alamat" value="${escapeHtml(data.alamat || '')}"></div><div class="input-group"><i class="fas fa-sort-numeric-down"></i><input type="number" id="urutan" value="${data.urutan || 0}"></div>`;
+                if (type === 'kecamatan') {
+                    fields = `<div class="input-group"><i class="fas fa-building"></i><input id="nama" value="${escapeHtml(data.nama)}" required></div>
+                             <div class="input-group"><i class="fas fa-user"></i><input id="ketua" value="${escapeHtml(data.ketua || '')}"></div>
+                             <div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option><option ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option></select></div>`;
+                } else if (type === 'desa') {
+                    fields = `<div class="input-group"><i class="fas fa-home"></i><input id="nama" value="${escapeHtml(data.nama)}" required></div>
+                             <div class="input-group"><i class="fas fa-building"></i><input id="kecamatan" value="${escapeHtml(data.kecamatan)}" required></div>
+                             <div class="input-group"><i class="fas fa-user"></i><input id="ketua" value="${escapeHtml(data.ketua || '')}"></div>
+                             <div class="input-group"><i class="fas fa-flag-checkered"></i><select id="status"><option ${data.status === 'Aktif' ? 'selected' : ''}>Aktif</option><option ${data.status === 'Tidak Aktif' ? 'selected' : ''}>Tidak Aktif</option></select></div>`;
+                } else if (type === 'struktur') {
+                    fields = `<div class="input-group"><i class="fas fa-tag"></i><input id="jabatan" value="${escapeHtml(data.jabatan)}" required></div>
+                             <div class="input-group"><i class="fas fa-user"></i><input id="nama" value="${escapeHtml(data.nama)}" required></div>
+                             <div class="input-group"><i class="fas fa-map-marker-alt"></i><input id="alamat" value="${escapeHtml(data.alamat || '')}"></div>
+                             <div class="input-group"><i class="fas fa-sort-numeric-down"></i><input type="number" id="urutan" value="${data.urutan || 0}"></div>`;
+                }
                 fieldsDiv.innerHTML = fields;
                 modal.style.display = 'block';
                 document.getElementById('dataForm').onsubmit = (e) => { e.preventDefault(); saveData(type); };
@@ -1026,35 +1123,97 @@
         
         function saveData(type) {
             let data = {};
-            if (type === 'kecamatan') data = { nama: document.getElementById('nama')?.value, ketua: document.getElementById('ketua')?.value, status: document.getElementById('status')?.value, updatedAt: new Date().toISOString() };
-            else if (type === 'desa') data = { nama: document.getElementById('nama')?.value, kecamatan: document.getElementById('kecamatan')?.value, ketua: document.getElementById('ketua')?.value, status: document.getElementById('status')?.value, updatedAt: new Date().toISOString() };
-            else if (type === 'struktur') data = { jabatan: document.getElementById('jabatan')?.value, nama: document.getElementById('nama')?.value, alamat: document.getElementById('alamat')?.value, urutan: parseInt(document.getElementById('urutan')?.value) || 0, updatedAt: new Date().toISOString() };
+            if (type === 'kecamatan') {
+                data = { 
+                    nama: document.getElementById('nama')?.value, 
+                    ketua: document.getElementById('ketua')?.value, 
+                    status: document.getElementById('status')?.value, 
+                    updatedAt: new Date().toISOString() 
+                };
+            } else if (type === 'desa') {
+                data = { 
+                    nama: document.getElementById('nama')?.value, 
+                    kecamatan: document.getElementById('kecamatan')?.value, 
+                    ketua: document.getElementById('ketua')?.value, 
+                    status: document.getElementById('status')?.value, 
+                    updatedAt: new Date().toISOString() 
+                };
+            } else if (type === 'struktur') {
+                data = { 
+                    jabatan: document.getElementById('jabatan')?.value, 
+                    nama: document.getElementById('nama')?.value, 
+                    alamat: document.getElementById('alamat')?.value, 
+                    urutan: parseInt(document.getElementById('urutan')?.value) || 0, 
+                    updatedAt: new Date().toISOString() 
+                };
+            }
             const promise = currentEditId ? database.ref(`${type}/${currentEditId}`).update(data) : database.ref(type).push(data);
-            promise.then(() => { closeModal(); if (type === 'kecamatan') loadKecamatanData(); else if (type === 'desa') loadDesaData(); else loadStrukturData(); updateStats(); alert('✅ Data tersimpan!'); });
+            promise.then(() => { 
+                closeModal(); 
+                if (type === 'kecamatan') loadKecamatanData(); 
+                else if (type === 'desa') loadDesaData(); 
+                else loadStrukturData(); 
+                updateStats(); 
+                alert('✅ Data tersimpan!'); 
+            }).catch(err => alert('Gagal simpan: ' + err.message));
         }
         
         function deleteItem(type, id) {
-            if (confirm('Hapus data ini?')) database.ref(`${type}/${id}`).remove().then(() => { if (type === 'kecamatan') loadKecamatanData(); else if (type === 'desa') loadDesaData(); else loadStrukturData(); updateStats(); alert('Terhapus!'); });
+            if (confirm('Hapus data ini secara permanen?')) {
+                database.ref(`${type}/${id}`).remove().then(() => { 
+                    if (type === 'kecamatan') loadKecamatanData(); 
+                    else if (type === 'desa') loadDesaData(); 
+                    else loadStrukturData(); 
+                    updateStats(); 
+                    alert('✅ Data terhapus!'); 
+                }).catch(err => alert('Gagal hapus: ' + err.message));
+            }
         }
         
         function editSekretariat() {
-            const modal = document.getElementById('modal'), title = document.getElementById('modalTitle'), fieldsDiv = document.getElementById('formFields');
-            title.textContent = 'Edit Sekretariat';
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const fieldsDiv = document.getElementById('formFields');
+            title.textContent = 'Edit Informasi Sekretariat';
             database.ref('sekretariat').once('value', snap => {
                 const d = snap.val() || {};
-                fieldsDiv.innerHTML = `<div class="input-group"><i class="fas fa-map-marker-alt"></i><input id="alamat" value="${escapeHtml(d.alamat || '')}" placeholder="Alamat"></div><div class="input-group"><i class="fas fa-phone"></i><input id="telepon" value="${escapeHtml(d.telepon || '')}" placeholder="Telepon"></div><div class="input-group"><i class="fas fa-envelope"></i><input id="email" value="${escapeHtml(d.email || '')}" placeholder="Email"></div><div class="input-group"><i class="fas fa-image"></i><input id="foto" value="${escapeHtml(d.foto || '')}" placeholder="Foto URL"></div><div class="input-group"><i class="fas fa-globe"></i><input id="latitude" value="${d.latitude || '-6.7353'}" placeholder="Latitude"></div><div class="input-group"><i class="fas fa-globe"></i><input id="longitude" value="${d.longitude || '108.5670'}" placeholder="Longitude"></div>`;
+                fieldsDiv.innerHTML = `
+                    <div class="input-group"><i class="fas fa-map-marker-alt"></i><input id="alamat" value="${escapeHtml(d.alamat || '')}" placeholder="Alamat Lengkap"></div>
+                    <div class="input-group"><i class="fas fa-phone"></i><input id="telepon" value="${escapeHtml(d.telepon || '')}" placeholder="Nomor Telepon"></div>
+                    <div class="input-group"><i class="fas fa-envelope"></i><input id="email" value="${escapeHtml(d.email || '')}" placeholder="Email"></div>
+                    <div class="input-group"><i class="fas fa-image"></i><input id="foto" value="${escapeHtml(d.foto || '')}" placeholder="URL Foto Sekretariat"></div>
+                    <div class="input-group"><i class="fas fa-globe"></i><input id="latitude" value="${d.latitude || '-6.7353'}" placeholder="Latitude"></div>
+                    <div class="input-group"><i class="fas fa-globe"></i><input id="longitude" value="${d.longitude || '108.5670'}" placeholder="Longitude"></div>
+                `;
                 modal.style.display = 'block';
                 document.getElementById('dataForm').onsubmit = (e) => {
                     e.preventDefault();
-                    database.ref('sekretariat').update({ alamat: document.getElementById('alamat')?.value, telepon: document.getElementById('telepon')?.value, email: document.getElementById('email')?.value, foto: document.getElementById('foto')?.value, latitude: parseFloat(document.getElementById('latitude')?.value), longitude: parseFloat(document.getElementById('longitude')?.value), updatedAt: new Date().toISOString() }).then(() => { closeModal(); loadSekretariatData(); alert('✅ Sekretariat diupdate!'); });
+                    database.ref('sekretariat').update({
+                        alamat: document.getElementById('alamat')?.value,
+                        telepon: document.getElementById('telepon')?.value,
+                        email: document.getElementById('email')?.value,
+                        foto: document.getElementById('foto')?.value,
+                        latitude: parseFloat(document.getElementById('latitude')?.value),
+                        longitude: parseFloat(document.getElementById('longitude')?.value),
+                        updatedAt: new Date().toISOString()
+                    }).then(() => { 
+                        closeModal(); 
+                        loadSekretariatData(); 
+                        alert('✅ Sekretariat diupdate!'); 
+                    }).catch(err => alert('Gagal update: ' + err.message));
                 };
             });
         }
         
         function showAddDokumentasiForm() {
-            const modal = document.getElementById('modal'), title = document.getElementById('modalTitle'), fieldsDiv = document.getElementById('formFields');
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const fieldsDiv = document.getElementById('formFields');
             title.textContent = 'Tambah Foto Kegiatan';
-            fieldsDiv.innerHTML = `<div class="input-group"><i class="fas fa-image"></i><input id="fotoUrl" placeholder="URL Foto" required></div><small>Masukkan URL gambar langsung</small>`;
+            fieldsDiv.innerHTML = `
+                <div class="input-group"><i class="fas fa-image"></i><input id="fotoUrl" placeholder="URL Foto" required></div>
+                <small>Masukkan URL gambar langsung (contoh: https://example.com/foto.jpg)</small>
+            `;
             modal.style.display = 'block';
             document.getElementById('dataForm').onsubmit = async (e) => {
                 e.preventDefault();
@@ -1063,17 +1222,31 @@
                 const snap = await database.ref('sekretariat').once('value');
                 const photos = snap.val()?.foto_kegiatan || [];
                 photos.push(url);
-                database.ref('sekretariat').update({ foto_kegiatan: photos }).then(() => { closeModal(); loadDokumentasiData(); updateStats(); alert('Foto ditambahkan!'); });
+                database.ref('sekretariat').update({ foto_kegiatan: photos, updatedAt: new Date().toISOString() })
+                    .then(() => { closeModal(); loadDokumentasiData(); updateStats(); alert('✅ Foto ditambahkan!'); })
+                    .catch(err => alert('Gagal: ' + err.message));
             };
         }
         
-        function previewPhoto(url, idx) { currentPreviewPhotoUrl = url; currentPreviewIndex = idx; document.getElementById('previewImage').src = url; document.getElementById('previewModal').style.display = 'block'; }
-        function deleteCurrentPhoto() { if (confirm('Hapus foto ini?')) deletePhoto(currentPreviewIndex); closePreviewModal(); }
+        function previewPhoto(url, idx) { 
+            currentPreviewPhotoUrl = url; 
+            currentPreviewIndex = idx; 
+            document.getElementById('previewImage').src = url; 
+            document.getElementById('previewModal').style.display = 'block'; 
+        }
+        
+        function deleteCurrentPhoto() { 
+            if (confirm('Hapus foto ini?')) deletePhoto(currentPreviewIndex); 
+            closePreviewModal(); 
+        }
+        
         function deletePhoto(index) {
             database.ref('sekretariat').once('value', snap => {
                 const photos = snap.val()?.foto_kegiatan || [];
-                photos.splice(index,1);
-                database.ref('sekretariat').update({ foto_kegiatan: photos }).then(() => { loadDokumentasiData(); updateStats(); alert('Foto dihapus!'); });
+                photos.splice(index, 1);
+                database.ref('sekretariat').update({ foto_kegiatan: photos, updatedAt: new Date().toISOString() })
+                    .then(() => { loadDokumentasiData(); updateStats(); alert('✅ Foto dihapus!'); })
+                    .catch(err => alert('Gagal hapus: ' + err.message));
             });
         }
         
@@ -1088,11 +1261,13 @@
             });
         }
         
-        // Init
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.hamburger')?.addEventListener('click', () => document.querySelector('.nav-menu').classList.toggle('active'));
             document.querySelector('.close')?.addEventListener('click', closeModal);
-            window.onclick = e => { if (e.target === document.getElementById('modal')) closeModal(); if (e.target === document.getElementById('previewModal')) closePreviewModal(); };
+            window.onclick = e => { 
+                if (e.target === document.getElementById('modal')) closeModal(); 
+                if (e.target === document.getElementById('previewModal')) closePreviewModal(); 
+            };
             checkAuth();
         });
     </script>
