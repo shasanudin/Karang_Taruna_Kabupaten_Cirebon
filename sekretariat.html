@@ -318,6 +318,107 @@
             font-weight: 500;
         }
 
+        /* Modal Detail Berita */
+        .news-modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow-y: auto;
+        }
+        .news-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 750px;
+            border-radius: 24px;
+            position: relative;
+            animation: slideDown 0.3s ease;
+            overflow: hidden;
+        }
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .news-modal-close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(0,0,0,0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .news-modal-close:hover {
+            background: rgba(0,0,0,0.8);
+            transform: scale(1.1);
+        }
+        .news-modal-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .news-modal-body {
+            padding: 2rem;
+        }
+        .news-modal-title {
+            font-size: 1.8rem;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .news-modal-date {
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        .news-modal-desc {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #34495e;
+            white-space: pre-wrap;
+            margin-bottom: 1.5rem;
+        }
+        .news-modal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .news-modal-link:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+        }
+
         /* Galeri foto tambahan (grid) */
         .photo-grid {
             display: grid;
@@ -366,6 +467,9 @@
             .page-header h1 { font-size: 1.8rem; }
             .cards-wrapper { gap: 1rem; }
             .activity-card { width: 270px; }
+            .news-modal-title { font-size: 1.4rem; }
+            .news-modal-body { padding: 1.5rem; }
+            .news-modal-img { height: 200px; }
         }
         @media (max-width: 480px) {
             .page-header h1 { font-size: 1.5rem; }
@@ -457,6 +561,24 @@
         </section>
     </main>
 
+    <!-- Modal Detail Berita -->
+    <div id="newsModal" class="news-modal">
+        <div class="news-modal-content">
+            <span class="news-modal-close" onclick="closeNewsModal()">&times;</span>
+            <img id="modalNewsImg" class="news-modal-img" src="" alt="Gambar Berita">
+            <div class="news-modal-body">
+                <h2 id="modalNewsTitle" class="news-modal-title"></h2>
+                <div class="news-modal-date">
+                    <i class="far fa-calendar-alt"></i> <span id="modalNewsDate"></span>
+                </div>
+                <div id="modalNewsDesc" class="news-modal-desc"></div>
+                <a href="#" id="modalNewsLink" class="news-modal-link" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Baca Selengkapnya
+                </a>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="container">
             <p>&copy; 2024 Karang Taruna Kabupaten Cirebon. All Rights Reserved.</p>
@@ -502,6 +624,9 @@
             ]
         };
 
+        // Variabel untuk menyimpan data berita (agar bisa diakses saat modal dibuka)
+        let beritaDataArray = [];
+
         // Helper: escape HTML
         function escapeHtml(str) {
             if (!str) return '';
@@ -535,23 +660,72 @@
             } catch(e) { console.warn(e); el.innerHTML = '<div style="padding:20px;">📍 Peta tidak tersedia</div>'; }
         }
 
-        // Render cards berita dari data Firebase
+        // Fungsi untuk menampilkan modal detail berita
+        function showNewsDetail(index) {
+            const berita = beritaDataArray[index];
+            if (!berita) return;
+            
+            const modal = document.getElementById('newsModal');
+            const modalImg = document.getElementById('modalNewsImg');
+            const modalTitle = document.getElementById('modalNewsTitle');
+            const modalDate = document.getElementById('modalNewsDate');
+            const modalDesc = document.getElementById('modalNewsDesc');
+            const modalLink = document.getElementById('modalNewsLink');
+            
+            modalImg.src = berita.gambar && berita.gambar.trim() !== '' ? berita.gambar : 'https://picsum.photos/id/13/800/400';
+            modalImg.alt = berita.judul || 'Berita Karang Taruna';
+            modalTitle.textContent = berita.judul || 'Kegiatan Karang Taruna';
+            modalDate.textContent = berita.tanggal || 'Tidak ada tanggal';
+            modalDesc.innerHTML = (berita.deskripsi || 'Tidak ada deskripsi lengkap.').replace(/\n/g, '<br>');
+            
+            if (berita.link && berita.link !== '#' && berita.link !== 'javascript:void(0);') {
+                modalLink.href = berita.link;
+                modalLink.style.display = 'inline-flex';
+            } else {
+                modalLink.style.display = 'none';
+            }
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeNewsModal() {
+            const modal = document.getElementById('newsModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Tutup modal jika klik di luar konten
+        window.onclick = function(event) {
+            const modal = document.getElementById('newsModal');
+            if (event.target === modal) {
+                closeNewsModal();
+            }
+        }
+
+        // Render cards berita dengan event handler untuk membuka modal
         function renderNewsCards(beritaList) {
             const wrapper = document.getElementById('newsCardsWrapper');
             if (!wrapper) return;
+            
+            // Simpan data berita ke variabel global
+            beritaDataArray = beritaList;
+            
             if (!beritaList || beritaList.length === 0) {
                 wrapper.innerHTML = '<div class="empty-news"><i class="fas fa-calendar-alt"></i> Belum ada berita/kegiatan terbaru. Silakan tambahkan melalui halaman admin.</div>';
                 return;
             }
+            
             let html = '';
-            for (let item of beritaList) {
+            for (let i = 0; i < beritaList.length; i++) {
+                const item = beritaList[i];
                 const judul = escapeHtml(item.judul) || 'Kegiatan Karang Taruna';
                 const tanggal = escapeHtml(item.tanggal) || 'Terkini';
                 const desc = escapeHtml(item.deskripsi) || 'Kegiatan positif pemuda Kabupaten Cirebon.';
                 const imgSrc = item.gambar && item.gambar.trim() !== '' ? item.gambar : 'https://picsum.photos/id/13/400/250';
-                const linkUrl = item.link && item.link !== '#' ? item.link : 'javascript:void(0);';
+                
                 html += `
-                    <div class="activity-card" onclick="window.open('${linkUrl}', '_blank')" style="cursor: pointer;">
+                    <div class="activity-card" onclick="showNewsDetail(${i})">
                         <img class="card-img" src="${imgSrc}" alt="${judul}" loading="lazy" onerror="this.src='https://picsum.photos/id/13/400/250'">
                         <div class="card-content">
                             <div class="card-title">
@@ -633,7 +807,7 @@
                 }
             });
 
-            // ========== PERBAIKAN UTAMA: AMBIL BERITA KEGIATAN LANGSUNG DARI NODE 'berita_kegiatan' ==========
+            // ========== AMBIL BERITA KEGIATAN LANGSUNG DARI NODE 'berita_kegiatan' ==========
             console.log("Mengambil data berita/kegiatan dari node 'berita_kegiatan'...");
             database.ref('berita_kegiatan').once('value').then(snapshot => {
                 const beritaData = snapshot.val();
