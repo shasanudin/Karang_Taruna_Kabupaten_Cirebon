@@ -2,126 +2,27 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karang Taruna Kabupaten Cirebon - Sekretariat</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Karang Taruna Kabupaten Cirebon - Sekretariat & Kegiatan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #fullMap {
-            width: 100%;
-            height: 400px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            margin-top: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .secretariat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fc;
+            color: #1e2a3e;
+            overflow-x: hidden;
         }
-        .photo-gallery {
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .photo-gallery img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.3s ease;
-        }
-        .photo-gallery img:hover {
-            transform: scale(1.05);
-        }
-        .secretariat-info h3, 
-        .map-section h3, 
-        .additional-photos h3 {
-            color: #1e3c72;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        .secretariat-info h3:after, 
-        .map-section h3:after, 
-        .additional-photos h3:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-radius: 3px;
-        }
-        .info-details {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 10px;
-        }
-        .info-details p {
-            margin: 15px 0;
-            font-size: 1rem;
-            padding: 10px;
-            background: white;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-        .info-details p:hover {
-            transform: translateX(5px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .info-details i {
-            width: 30px;
-            color: #2a5298;
-            font-size: 1.2rem;
-        }
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        .photo-grid img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .photo-grid img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .page-header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            margin-top: 0;
-        }
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        /* Navbar styles */
+
+        /* Navbar */
         .navbar {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             position: fixed;
@@ -184,20 +85,270 @@
             margin: 3px 0;
             transition: 0.3s;
         }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 70px;
+        }
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sekretariat Grid */
+        .secretariat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0 2rem;
+        }
+        .photo-gallery {
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease;
+        }
+        .photo-gallery:hover {
+            transform: translateY(-5px);
+        }
+        .photo-gallery img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 20px;
+            transition: transform 0.5s ease;
+        }
+        .photo-gallery img:hover {
+            transform: scale(1.03);
+        }
+        .secretariat-info h3, .map-section h3, .news-section h3, .additional-photos h3 {
+            color: #1e3c72;
+            margin-bottom: 1.2rem;
+            font-size: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .secretariat-info h3:after, .map-section h3:after, .news-section h3:after, .additional-photos h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #1e3c72 0%, #ffd700 100%);
+            border-radius: 4px;
+        }
+        .info-details {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .info-details p {
+            margin: 18px 0;
+            font-size: 1rem;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .info-details p:hover {
+            transform: translateX(8px);
+            background: #eef2ff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .info-details i {
+            width: 32px;
+            color: #2a5298;
+            font-size: 1.2rem;
+        }
+
+        /* Map */
+        #fullMap {
+            width: 100%;
+            height: 380px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+
+        /* ===== BERITA & KEGIATAN SECTION (CARDS + ANIMASI SIDESCROLL) ===== */
+        .news-section {
+            margin: 3rem 0 2rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .scroll-hint {
+            font-size: 0.85rem;
+            color: #2a5298;
+            background: #eef2ff;
+            padding: 5px 12px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .scroll-hint i {
+            animation: subtleMove 1.2s infinite alternate;
+        }
+        @keyframes subtleMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(6px); }
+        }
+        .cards-scroll-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            scroll-behavior: smooth;
+            cursor: grab;
+            padding: 15px 5px 25px 5px;
+            border-radius: 28px;
+            position: relative;
+            scrollbar-width: thin;
+        }
+        .cards-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .cards-scroll-container::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .cards-scroll-container::-webkit-scrollbar-thumb {
+            background: #2a5298;
+            border-radius: 10px;
+        }
+        .cards-wrapper {
+            display: inline-flex;
+            gap: 1.8rem;
+            white-space: normal;
+        }
+        /* Kartu Kegiatan modern */
+        .activity-card {
+            width: 300px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            display: inline-block;
+            vertical-align: top;
+            white-space: normal;
+            cursor: pointer;
+            animation: fadeSlideUp 0.6s ease-out backwards;
+        }
+        .activity-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+        }
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(35px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .activity-card:hover .card-img {
+            transform: scale(1.05);
+        }
+        .card-content {
+            padding: 1.2rem 1rem 1.5rem;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #1e3c72;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title i {
+            color: #ffb347;
+            font-size: 1.1rem;
+        }
+        .card-date {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-desc {
+            font-size: 0.85rem;
+            line-height: 1.45;
+            color: #2d3e50;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .empty-news {
+            background: #fff9e8;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 30px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        /* Galeri foto tambahan (grid) */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 1.3rem;
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+        .photo-grid img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .photo-grid img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+        }
         footer {
             background: #1e3c72;
             color: white;
             text-align: center;
             padding: 2rem;
-            margin-top: 0;
+            margin-top: 2rem;
         }
-        footer p {
-            margin: 5px 0;
-        }
+
         @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
+            .hamburger { display: flex; }
             .nav-menu {
                 position: fixed;
                 left: -100%;
@@ -210,23 +361,20 @@
                 padding: 2rem 0;
                 gap: 1rem;
             }
-            .nav-menu.active {
-                left: 0;
-            }
-            .secretariat-grid {
-                grid-template-columns: 1fr;
-            }
-            .photo-gallery img {
-                height: 250px;
-            }
-            .page-header h1 {
-                font-size: 1.8rem;
-            }
+            .nav-menu.active { left: 0; }
+            .secretariat-grid { grid-template-columns: 1fr; }
+            .page-header h1 { font-size: 1.8rem; }
+            .cards-wrapper { gap: 1rem; }
+            .activity-card { width: 270px; }
         }
         @media (max-width: 480px) {
-            .page-header h1 {
-                font-size: 1.5rem;
-            }
+            .page-header h1 { font-size: 1.5rem; }
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #2a5298;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -234,7 +382,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna" class="logo-img">
+                <img src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Karang-Taruna-Logo-Vector-removebg-preview.png" alt="Logo Karang Taruna">
                 <h2>KARANG TARUNA <span>CIREBON</span></h2>
             </div>
             <ul class="nav-menu">
@@ -254,8 +402,8 @@
     <main>
         <section class="page-header">
             <div class="container">
-                <h1>Sekretariat Karang Taruna</h1>
-                <p>Kabupaten Cirebon</p>
+                <h1>Sekretariat & Dokumentasi Kegiatan</h1>
+                <p>Karang Taruna Kabupaten Cirebon | Berdedikasi untuk Pemuda dan Masyarakat</p>
             </div>
         </section>
 
@@ -263,30 +411,46 @@
             <div class="container">
                 <div class="secretariat-grid">
                     <div class="secretariat-photo">
-                        <h3>Foto Sekretariat</h3>
+                        <h3>📍 Kantor Sekretariat</h3>
                         <div class="photo-gallery">
-                            <img id="mainPhoto" src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png" alt="Foto Utama Sekretariat Karang Taruna Kabupaten Cirebon">
+                            <img id="mainPhoto" src="https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png" alt="Sekretariat Karang Taruna">
                         </div>
                     </div>
                     <div class="secretariat-info">
-                        <h3>Informasi Sekretariat</h3>
+                        <h3>Informasi Kontak</h3>
                         <div class="info-details">
                             <p><i class="fas fa-map-marker-alt"></i> <span id="address">Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon</span></p>
-                            <p><i class="fas fa-phone"></i> <span id="phone">(0231) 321456</span></p>
+                            <p><i class="fas fa-phone-alt"></i> <span id="phone">(0231) 321456</span></p>
                             <p><i class="fas fa-envelope"></i> <span id="email">karangtaruna@cirebonkab.go.id</span></p>
                         </div>
                     </div>
                 </div>
 
                 <div class="map-section">
-                    <h3>Lokasi Sekretariat</h3>
-                    <div id="fullMap">Memuat peta...</div>
+                    <h3>🗺️ Peta Lokasi</h3>
+                    <div id="fullMap">Memuat peta interaktif...</div>
                 </div>
 
+                <!-- ========= FITUR BARU: BERITA & KEGIATAN (CARD + SIDE SCROLL ANIMATION) ========= -->
+                <div class="news-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-newspaper"></i> Berita & Kegiatan Terkini</h3>
+                        <div class="scroll-hint">
+                            <i class="fas fa-arrow-right"></i> Geser ke samping untuk lihat lebih banyak
+                        </div>
+                    </div>
+                    <div class="cards-scroll-container" id="scrollContainer">
+                        <div class="cards-wrapper" id="newsCardsWrapper">
+                            <div class="loading">Memuat berita kegiatan...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Galeri dokumentasi tambahan (statis / dinamis) -->
                 <div class="additional-photos">
-                    <h3>Dokumentasi Kegiatan</h3>
+                    <h3><i class="fas fa-images"></i> Galeri Dokumentasi</h3>
                     <div class="photo-grid" id="activityPhotos">
-                        <div class="loading">Memuat foto kegiatan...</div>
+                        <div class="loading">Memuat foto dokumentasi...</div>
                     </div>
                 </div>
             </div>
@@ -303,14 +467,10 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <!-- All JavaScript for sekretariat.html - INDEPENDENT, tidak tergantung script.js -->
+
     <script>
-        // ==================== FIREBASE CONFIGURATION ====================
+        // ==================== FIREBASE CONFIG ====================
         const firebaseConfig = {
             apiKey: "AIzaSyCDOejXR-_38GBS2jTg6GHMy-AkOP1A2dM",
             authDomain: "karang-taruna-dalam-data.firebaseapp.com",
@@ -318,19 +478,16 @@
             projectId: "karang-taruna-dalam-data",
             storageBucket: "karang-taruna-dalam-data.firebasestorage.app",
             messagingSenderId: "922028160917",
-            appId: "1:922028160917:web:8397305a92af28c0ca689c",
-            measurementId: "G-8JNPDJPRM1"
+            appId: "1:922028160917:web:8397305a92af28c0ca689c"
         };
         
-        // Initialize Firebase (hanya sekali)
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase initialized on sekretariat.html');
+            console.log("✅ Firebase ready (sekretariat + berita)");
         }
-        
         const database = firebase.database();
-        
-        // ==================== DEFAULT DATA ====================
+
+        // Data default
         const DEFAULT_SEKRETARIAT = {
             alamat: "Jl. Fatahillah, Watubelah, Sumber, Kabupaten Cirebon",
             telepon: "(0231) 321456",
@@ -338,156 +495,241 @@
             foto: "https://raw.githubusercontent.com/shasanudin/Karang_Taruna_Kabupaten_Cirebon/main/images/logo/Screenshot_20260419-225720.png",
             latitude: -6.740376,
             longitude: 108.495085,
-            foto_kegiatan: [],
-            updatedAt: new Date().toISOString()
+            foto_kegiatan: [
+                "https://picsum.photos/id/20/400/300",
+                "https://picsum.photos/id/26/400/300",
+                "https://picsum.photos/id/29/400/300"
+            ],
+            berita_kegiatan: [] // akan diisi default jika kosong
         };
-        
-        // ==================== HELPER FUNCTIONS ====================
+
+        // Data contoh berita/kegiatan (jika database kosong, kita tampilkan dengan animasi side scroll)
+        const DEFAULT_BERITA_KEGIATAN = [
+            {
+                id: "berita1",
+                judul: "Bakti Sosial Peduli Bencana",
+                tanggal: "10 April 2025",
+                deskripsi: "Karang Taruna Kabupaten Cirebon menggelar aksi kemanusiaan dan penggalangan dana untuk korban banjir di wilayah timur.",
+                gambar: "https://picsum.photos/id/100/400/250",
+                link: "#"
+            },
+            {
+                id: "berita2",
+                judul: "Pelatihan Kewirausahaan Pemuda",
+                tanggal: "25 Maret 2025",
+                deskripsi: "Kolaborasi dengan Disperindag membuka kelas bisnis digital dan UMKM bagi pemuda desa se-Kabupaten Cirebon.",
+                gambar: "https://picsum.photos/id/26/400/250",
+                link: "#"
+            },
+            {
+                id: "berita3",
+                judul: "Turnamen Voli Antar Desa",
+                tanggal: "5 April 2025",
+                deskripsi: "Semarak olahraga pemuda dalam rangka memperingati HUT Karang Taruna ke-45. Juara umum diraih Desa Palimanan.",
+                gambar: "https://picsum.photos/id/29/400/250",
+                link: "#"
+            },
+            {
+                id: "berita4",
+                judul: "Seminar Kepemimpinan Pemuda",
+                tanggal: "18 Maret 2025",
+                deskripsi: "Menghadirkan pembicara inspiratif untuk mencetak generasi pemimpin masa depan Cirebon.",
+                gambar: "https://picsum.photos/id/155/400/250",
+                link: "#"
+            },
+            {
+                id: "berita5",
+                judul: "Gotong Royong Bersihkan Aliran Sungai",
+                tanggal: "2 April 2025",
+                deskripsi: "Aksi peduli lingkungan bersama warga dan komunitas pecinta alam di wilayah Sumber.",
+                gambar: "https://picsum.photos/id/143/400/250",
+                link: "#"
+            }
+        ];
+
+        // Helper: escape HTML
         function escapeHtml(str) {
             if (!str) return '';
-            return String(str)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
         }
-        
-        function initLeafletMap(elementId, latitude, longitude, zoom = 15) {
-            const mapElement = document.getElementById(elementId);
-            if (!mapElement) return null;
-            
-            if (mapElement._leaflet_id) {
-                try {
-                    if (window[`map_${elementId}`]) {
-                        window[`map_${elementId}`].remove();
-                    }
-                } catch(e) {
-                    console.log('Error removing existing map:', e);
-                }
-            }
-            
+
+        // Leaflet map init
+        function initLeafletMap(elementId, lat, lng, zoom=15) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (el._leaflet_id && window[`map_${elementId}`]) window[`map_${elementId}`].remove();
             if (typeof L === 'undefined') {
-                console.log('Leaflet belum loaded, mencoba lagi...');
-                setTimeout(() => initLeafletMap(elementId, latitude, longitude, zoom), 500);
-                return null;
+                setTimeout(() => initLeafletMap(elementId, lat, lng, zoom), 300);
+                return;
             }
-            
             try {
-                mapElement.innerHTML = '';
-                const map = L.map(elementId).setView([latitude, longitude], zoom);
+                el.innerHTML = '';
+                const map = L.map(elementId).setView([lat, lng], zoom);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                    attribution: '© OpenStreetMap',
                     maxZoom: 19
                 }).addTo(map);
-                
-                const marker = L.marker([latitude, longitude]).addTo(map);
-                marker.bindPopup(`<b>Sekretariat Karang Taruna</b><br>Kabupaten Cirebon`).openPopup();
-                
+                L.marker([lat, lng]).addTo(map).bindPopup('<b>Sekretariat Karang Taruna</b><br>Kabupaten Cirebon').openPopup();
                 window[`map_${elementId}`] = map;
                 setTimeout(() => map.invalidateSize(), 200);
-                return map;
-            } catch(e) {
-                console.error('Error creating Leaflet map:', e);
-                mapElement.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">📍 Peta tidak dapat dimuat</div>';
-                return null;
-            }
+            } catch(e) { console.warn(e); el.innerHTML = '<div style="padding:20px;">📍 Peta tidak tersedia</div>'; }
         }
-        
-        // ==================== LOAD SEKRETARIAT DATA ====================
-        function loadSecretariatPage() {
-            console.log('Loading sekretariat page...');
-            
-            database.ref('sekretariat').once('value', (snapshot) => {
+
+        // Render cards berita (horizontal scroll animation sudah otomatis oleh CSS & container)
+        function renderNewsCards(beritaList) {
+            const wrapper = document.getElementById('newsCardsWrapper');
+            if (!wrapper) return;
+            if (!beritaList || beritaList.length === 0) {
+                wrapper.innerHTML = '<div class="empty-news"><i class="fas fa-calendar-alt"></i> Belum ada berita/kegiatan terbaru. Silakan cek lagi nanti.</div>';
+                return;
+            }
+            let html = '';
+            for (let item of beritaList) {
+                const judul = escapeHtml(item.judul) || 'Kegiatan Karang Taruna';
+                const tanggal = escapeHtml(item.tanggal) || 'Terkini';
+                const desc = escapeHtml(item.deskripsi) || 'Kegiatan positif pemuda Kabupaten Cirebon.';
+                const imgSrc = item.gambar && item.gambar.trim() !== '' ? item.gambar : 'https://picsum.photos/id/13/400/250';
+                html += `
+                    <div class="activity-card" onclick="window.open('${item.link && item.link !== '#' ? item.link : 'javascript:void(0);'}', '_blank')" style="cursor: pointer;">
+                        <img class="card-img" src="${imgSrc}" alt="${judul}" loading="lazy">
+                        <div class="card-content">
+                            <div class="card-title">
+                                <i class="fas fa-calendar-check"></i> ${judul}
+                            </div>
+                            <div class="card-date">
+                                <i class="far fa-calendar-alt"></i> ${tanggal}
+                            </div>
+                            <div class="card-desc">
+                                ${desc.length > 100 ? desc.substring(0, 100) + '...' : desc}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            wrapper.innerHTML = html;
+            // animasi muncul bertahap sudah dihandle CSS animation delay bisa ditambahkan
+            const cards = document.querySelectorAll('.activity-card');
+            cards.forEach((card, idx) => {
+                card.style.animationDelay = `${idx * 0.07}s`;
+            });
+        }
+
+        // Load semua data sekretariat, termasuk berita kegiatan (array) dan galeri foto
+        function loadFullSecretariatData() {
+            database.ref('sekretariat').once('value').then(snapshot => {
                 let data = snapshot.val();
-                
-                // Jika tidak ada data di database, gunakan default (TIDAK MENYIMPAN KE DATABASE)
                 if (!data) {
-                    console.log('No data in database, using default data (not saving to database)');
-                    data = DEFAULT_SEKRETARIAT;
-                } else {
-                    console.log('Data loaded from database');
+                    console.log("Data kosong, gunakan default tanpa menyimpan ke database");
+                    data = JSON.parse(JSON.stringify(DEFAULT_SEKRETARIAT));
                 }
-                
                 // Update foto utama
                 const mainPhoto = document.getElementById('mainPhoto');
-                if (mainPhoto) {
-                    mainPhoto.src = data.foto || DEFAULT_SEKRETARIAT.foto;
-                }
+                if (mainPhoto) mainPhoto.src = data.foto || DEFAULT_SEKRETARIAT.foto;
+                document.getElementById('address').innerText = data.alamat || DEFAULT_SEKRETARIAT.alamat;
+                document.getElementById('phone').innerText = data.telepon || DEFAULT_SEKRETARIAT.telepon;
+                document.getElementById('email').innerText = data.email || DEFAULT_SEKRETARIAT.email;
                 
-                // Update alamat
-                const addressElem = document.getElementById('address');
-                if (addressElem) {
-                    addressElem.textContent = data.alamat || DEFAULT_SEKRETARIAT.alamat;
-                }
+                const lat = data.latitude || DEFAULT_SEKRETARIAT.latitude;
+                const lng = data.longitude || DEFAULT_SEKRETARIAT.longitude;
+                setTimeout(() => initLeafletMap('fullMap', lat, lng, 15), 100);
                 
-                // Update telepon
-                const phoneElem = document.getElementById('phone');
-                if (phoneElem) {
-                    phoneElem.textContent = data.telepon || DEFAULT_SEKRETARIAT.telepon;
-                }
-                
-                // Update email
-                const emailElem = document.getElementById('email');
-                if (emailElem) {
-                    emailElem.textContent = data.email || DEFAULT_SEKRETARIAT.email;
-                }
-                
-                // Load map
-                const fullMapDiv = document.getElementById('fullMap');
-                if (fullMapDiv) {
-                    const lat = data.latitude || DEFAULT_SEKRETARIAT.latitude;
-                    const lng = data.longitude || DEFAULT_SEKRETARIAT.longitude;
-                    setTimeout(() => {
-                        initLeafletMap('fullMap', lat, lng, 15);
-                    }, 100);
-                }
-                
-                // Load activity photos
+                // Galeri foto kegiatan (static grid)
+                let galeriFoto = data.foto_kegiatan || DEFAULT_SEKRETARIAT.foto_kegiatan;
                 const photoGrid = document.getElementById('activityPhotos');
                 if (photoGrid) {
-                    const photos = data.foto_kegiatan || [];
-                    if (photos.length > 0) {
+                    if (galeriFoto.length > 0) {
                         photoGrid.innerHTML = '';
-                        photos.forEach(photo => {
-                            if (photo && photo.trim()) {
-                                const img = document.createElement('img');
-                                img.src = photo;
-                                img.alt = 'Foto Kegiatan Karang Taruna';
-                                img.style.width = '100%';
-                                img.style.height = '150px';
-                                img.style.objectFit = 'cover';
-                                img.style.borderRadius = '10px';
-                                img.style.cursor = 'pointer';
-                                img.onclick = () => window.open(photo, '_blank');
-                                photoGrid.appendChild(img);
+                        galeriFoto.forEach(fotoUrl => {
+                            if (fotoUrl && fotoUrl.trim()) {
+                                const imgDiv = document.createElement('img');
+                                imgDiv.src = fotoUrl;
+                                imgDiv.alt = "Dokumentasi Karang Taruna";
+                                imgDiv.onclick = () => window.open(fotoUrl, '_blank');
+                                photoGrid.appendChild(imgDiv);
                             }
                         });
                     } else {
-                        photoGrid.innerHTML = '<div class="loading">📷 Belum ada foto kegiatan</div>';
+                        photoGrid.innerHTML = '<div class="loading">📸 Belum ada foto dokumentasi, segera unggah momen kebersamaan.</div>';
                     }
                 }
                 
+                // Ambil data berita & kegiatan: prioritas dari node 'berita_kegiatan' di database, jika tidak ada gunakan default
+                let beritaKegiatan = null;
+                if (data.berita_kegiatan && Array.isArray(data.berita_kegiatan) && data.berita_kegiatan.length > 0) {
+                    beritaKegiatan = data.berita_kegiatan;
+                } else if (data.berita && Array.isArray(data.berita)) { // fallback kemungkinan nama node lain
+                    beritaKegiatan = data.berita;
+                } else {
+                    // tidak ada di database, gunakan data contoh default (tapi jangan overwrite database, hanya tampilan)
+                    beritaKegiatan = DEFAULT_BERITA_KEGIATAN;
+                }
+                renderNewsCards(beritaKegiatan);
             }).catch(error => {
-                console.error('Error loading sekretariat data:', error);
-                // Fallback ke data default jika error
-                const fullMapDiv = document.getElementById('fullMap');
-                if (fullMapDiv) {
-                    setTimeout(() => {
-                        initLeafletMap('fullMap', DEFAULT_SEKRETARIAT.latitude, DEFAULT_SEKRETARIAT.longitude, 15);
-                    }, 100);
-                }
-                
+                console.error("Error load data:", error);
+                // Fallback full: tampilkan default
+                const defaultLat = DEFAULT_SEKRETARIAT.latitude;
+                const defaultLng = DEFAULT_SEKRETARIAT.longitude;
+                setTimeout(() => initLeafletMap('fullMap', defaultLat, defaultLng, 15), 100);
+                document.getElementById('address').innerText = DEFAULT_SEKRETARIAT.alamat;
+                document.getElementById('phone').innerText = DEFAULT_SEKRETARIAT.telepon;
+                document.getElementById('email').innerText = DEFAULT_SEKRETARIAT.email;
+                const fallbackPhotos = DEFAULT_SEKRETARIAT.foto_kegiatan;
                 const photoGrid = document.getElementById('activityPhotos');
-                if (photoGrid) {
-                    photoGrid.innerHTML = '<div class="loading">❌ Gagal memuat foto kegiatan</div>';
+                if(photoGrid && fallbackPhotos.length) {
+                    photoGrid.innerHTML = '';
+                    fallbackPhotos.forEach(f => {
+                        const img = document.createElement('img');
+                        img.src = f;
+                        img.onclick = () => window.open(f, '_blank');
+                        photoGrid.appendChild(img);
+                    });
+                } else if(photoGrid) {
+                    photoGrid.innerHTML = '<div class="loading">⚠️ Gagal memuat galeri, gunakan data contoh.</div>';
                 }
+                renderNewsCards(DEFAULT_BERITA_KEGIATAN);
             });
         }
-        
-        // ==================== NAVIGATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Hamburger menu toggle
+
+        // Drag to scroll interaksi untuk horizontal scroll (opsional)
+        function enableHorizontalDragScroll() {
+            const container = document.getElementById('scrollContainer');
+            if (!container) return;
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            container.addEventListener('mousedown', (e) => {
+                isDown = true;
+                container.style.cursor = 'grabbing';
+                startX = e.pageX - container.offsetLeft;
+                scrollLeft = container.scrollLeft;
+            });
+            container.addEventListener('mouseleave', () => {
+                isDown = false;
+                container.style.cursor = 'grab';
+            });
+            container.addEventListener('mouseup', () => {
+                isDown = false;
+                container.style.cursor = 'grab';
+            });
+            container.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                container.scrollLeft = scrollLeft - walk;
+            });
+            container.style.cursor = 'grab';
+        }
+
+        // Hamburger menu toggle
+        document.addEventListener('DOMContentLoaded', () => {
             const hamburger = document.querySelector('.hamburger');
             const navMenu = document.querySelector('.nav-menu');
             if (hamburger) {
@@ -495,9 +737,8 @@
                     navMenu.classList.toggle('active');
                 });
             }
-            
-            // Load sekretariat data
-            loadSecretariatPage();
+            loadFullSecretariatData();
+            enableHorizontalDragScroll();
         });
     </script>
 </body>
